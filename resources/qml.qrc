@@ -9,5 +9,8 @@
         <file>../assets/icons/Search.png</file>
         <file>../assets/icons/user.png</file>
         <file>../assets/icons/lock.png</file>
+        <file>../assets/Face_placeholder.jpeg</file>
     </qresource>
 </RCC>
+
+
