@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>../Main.qml</file>
+        <file>../qml/LoginPage.qml</file>
+        <file>../qml/Dashboard.qml</file>
+        <file>../qml/FaceScan.qml</file>
+        <file>../qml/OSINTLookup.qml</file>
+        <file>../assets/icons/Home.png</file>
+        <file>../assets/icons/Search.png</file>
+        <file>../assets/icons/user.png</file>
+        <file>../assets/icons/lock.png</file>
+    </qresource>
+</RCC>

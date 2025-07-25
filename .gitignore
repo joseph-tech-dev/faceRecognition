@@ -1,0 +1,13 @@
+build/
+*.pro.user
+*.o
+*.obj
+*.so
+*.a
+*.exe
+*.dll
+*.qrc.depends
+*.qrc.cpp
+Makefile*
+*.autosave
+*.swp
