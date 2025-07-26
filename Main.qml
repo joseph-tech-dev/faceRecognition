@@ -4,9 +4,9 @@ import QtQuick.Controls 2.15
 ApplicationWindow {
     visible: true
     width: 1280
-    height: 720
+    height: 700
     title: "XPERSKEY"
-   // color: "#0f1c2e"
+    color: "black"
 
     StackView {
         id: stackView

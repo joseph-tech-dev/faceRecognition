@@ -8,209 +8,530 @@ Item {
     width: Screen.width
     height: Screen.height
 
+    // Custom properties for theming
+    property color neonBlue: "#00f2ff"
+    property color neonBlueDark: "#006a71"
+    property color bgColor: "#0a0f1c"
+    property color panelColor: "#111a24"
+    property color textColor: "#ffffff"
+    property real borderWidth: 0.5
+    property real globalMargin: 15  // Added global margin constant
+    property real panelSpacing: 20  // Added spacing between panels
+
+    // Background
     Rectangle {
         id: background
         anchors.fill: parent
-        color: "#0A0F1C"
+        color: bgColor
 
-        ColumnLayout {
+        // Subtle grid pattern
+        Canvas {
             anchors.fill: parent
-            spacing: 0
+            opacity: 0.05
+            onPaint: {
+                var ctx = getContext("2d")
+                ctx.strokeStyle = neonBlue
+                ctx.lineWidth = 1
 
-            // Top Bar
+                // Vertical lines
+                for (var x = 0; x < width; x += 30) {
+                    ctx.beginPath()
+                    ctx.moveTo(x, 0)
+                    ctx.lineTo(x, height)
+                    ctx.stroke()
+                }
+
+                // Horizontal lines
+                for (var y = 0; y < height; y += 30) {
+                    ctx.beginPath()
+                    ctx.moveTo(0, y)
+                    ctx.lineTo(width, y)
+                    ctx.stroke()
+                }
+            }
+        }
+    }
+
+    // Main layout with outer margins
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: globalMargin  // Added outer margin
+        spacing: panelSpacing  // Added spacing between header and content
+
+        // Top Header Bar
+        Rectangle {
+            id: header
+            Layout.fillWidth: true
+            height: root.height * 0.1
+            color: "transparent"
+            border.color: neonBlue
+            border.width: borderWidth
+            radius: 2
+
+            // Inner glow effect using a lighter border
             Rectangle {
-                Layout.fillWidth: true
-                height: root.height * 0.08
+                anchors.fill: parent
+                anchors.margins: 2
                 color: "transparent"
-                border.color: "#00FFFF"
+                border.color: Qt.lighter(neonBlue, 1.5)
                 border.width: 1
+                radius: parent.radius - 2
+                opacity: 0.7
+            }
 
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: root.width * 0.015
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: root.width * 0.02
 
+                // System name
+                Text {
+                    text: "FACEINTEL.SYSTEM"
+                    color: neonBlue
+                    font {
+                        pixelSize: root.width * 0.022
+                        family: "Courier New"
+                        weight: Font.Bold
+                        letterSpacing: 2
+                    }
+                    Layout.alignment: Qt.AlignLeft
+                }
+
+                Item { Layout.fillWidth: true }
+
+                // Status indicator
+                Row {
+                    spacing: 10
+                    layoutDirection: Qt.RightToLeft
+
+                    // Clock
                     Text {
-                        text: "FACEINTEL.SYSTEM"
-                        color: "#00FFFF"
-                        font.pixelSize: root.width * 0.018
-                        Layout.alignment: Qt.AlignLeft
+                        id: clock
+                        text: Qt.formatTime(new Date(), "hh:mm")
+                        color: neonBlue
+                        font {
+                            pixelSize: root.width * 0.016
+                            family: "Courier New"
+                            weight: Font.Bold
+                        }
+
+                        // Update clock every minute
+                        Timer {
+                            interval: 60000
+                            running: true
+                            repeat: true
+                            onTriggered: clock.text = Qt.formatTime(new Date(), "hh:mm")
+                        }
                     }
 
-                    Item { Layout.fillWidth: true }
+                    // Status indicator with pulsing animation
+                    Rectangle {
+                        id: statusIndicator
+                        width: 10
+                        height: 10
+                        radius: 5
+                        color: neonBlue
+                        anchors.verticalCenter: parent.verticalCenter
 
-                    Text {
-                        text: "SYSTEM STATUS"
-                        color: "#00FFFF"
-                        font.pixelSize: root.width * 0.012
+                        // Pulsing animation
+                        SequentialAnimation on opacity {
+                            loops: Animation.Infinite
+                            NumberAnimation { to: 0.3; duration: 800 }
+                            NumberAnimation { to: 1.0; duration: 800 }
+                        }
                     }
 
                     Text {
                         text: "ONLINE"
-                        color: "#00FFAA"
-                        font.pixelSize: root.width * 0.012
-                        leftPadding: root.width * 0.008
+                        color: "#00ffaa"
+                        font {
+                            pixelSize: root.width * 0.014
+                            family: "Courier New"
+                            weight: Font.Bold
+                        }
                     }
 
                     Text {
-                        text: Qt.formatTime(new Date(), "hh:mm")
-                        color: "#00FFFF"
-                        font.pixelSize: root.width * 0.014
-                        leftPadding: root.width * 0.02
+                        text: "SYSTEM STATUS"
+                        color: neonBlue
+                        font {
+                            pixelSize: root.width * 0.014
+                            family: "Courier New"
+                            weight: Font.Bold
+                        }
                     }
                 }
             }
+        }
 
-            // Main Section
-            RowLayout {
-                Layout.fillWidth: true
+        // Main content area with spacing
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: panelSpacing * 1.5  // Increased spacing between panels
+            anchors.margins: globalMargin / 2
+
+            // Side Navigation Menu
+            Rectangle {
+                id: sidebar
+                Layout.preferredWidth: root.width * 0.15
                 Layout.fillHeight: true
-                spacing: root.width * 0.01
+                color: panelColor
+                border.color: neonBlue
+                border.width: borderWidth
+                radius: 8
 
-                // Sidebar
+                // Inner padding for sidebar
+                anchors.margins: globalMargin / 2
+
+                // Inner glow
                 Rectangle {
-                    Layout.preferredWidth: root.width * 0.18
-                    Layout.fillHeight: true
+                    anchors.fill: parent
+                    anchors.margins: 2
                     color: "transparent"
-                    border.color: "#00FFFF"
+                    border.color: Qt.lighter(neonBlue, 1.5)
                     border.width: 1
-                    radius: 6
-
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: root.height * 0.05
-
-                        Repeater {
-                            model: ["HOME", "SCAN", "DATABASE", "SETTINGS"]
-                            delegate: Text {
-                                text: modelData
-                                color: "#00FFFF"
-                                font.pixelSize: root.width * 0.014
-                                anchors.horizontalCenter: parent.horizontalCenter
-                            }
-                        }
-                    }
+                    radius: parent.radius - 2
+                    opacity: 0.5
                 }
 
-                // Scan Area
-                Rectangle {
-                    Layout.preferredWidth: root.width * 0.48
-                    Layout.fillHeight: true
-                    color: "transparent"
-                    border.color: "#00FFFF"
-                    border.width: 1
-                    radius: 6
+                Column {
+                    anchors.centerIn: parent
+                    spacing: root.height * 0.05
+                    width: parent.width * 0.9  // Added width constraint
 
-                    Column {
-                        anchors.fill: parent
-                        anchors.margins: root.width * 0.02
-                        spacing: root.height * 0.04
-
-                        Rectangle {
-                            width: parent.width * 0.9
-                            height: parent.height * 0.7
-                            color: "#111"
-                            border.color: "#00FFFF"
-                            border.width: 2
+                    Repeater {
+                        model: ["HOME", "SCAN", "DATABASE", "SETTINGS"]
+                        delegate: Rectangle {
+                            width: parent.width
+                            height: root.height * 0.06
+                            color: modelData === "SCAN" ? Qt.rgba(0, 0.95, 1, 0.1) : "transparent"
+                            border.color: modelData === "SCAN" ? neonBlue : "transparent"
+                            border.width: 1
                             radius: 4
 
-                            Image {
+                            // Inner highlight for selected item
+                            Rectangle {
+                                visible: modelData === "SCAN"
                                 anchors.fill: parent
-                                source: "qrc:/assets/Face_placeholder.jpeg"
-                                fillMode: Image.PreserveAspectFit
+                                anchors.margins: 2
+                                color: "transparent"
+                                border.color: Qt.lighter(neonBlue, 1.5)
+                                border.width: 1
+                                radius: parent.radius - 2
+                                opacity: 0.7
                             }
-                        }
-
-                        Rectangle {
-                            width: parent.width * 0.6
-                            height: root.height * 0.07
-                            color: "transparent"
-                            border.color: "#00FFFF"
-                            border.width: 2
-                            radius: 4
 
                             Text {
-                                text: "SCAN"
+                                text: modelData
                                 anchors.centerIn: parent
-                                color: "#00FFFF"
-                                font.pixelSize: root.width * 0.018
-                                font.bold: true
+                                color: neonBlue
+                                font {
+                                    pixelSize: root.width * 0.014
+                                    family: "Courier New"
+                                    weight: Font.Bold
+                                    letterSpacing: 1
+                                }
                             }
 
                             MouseArea {
                                 anchors.fill: parent
-                                onClicked: console.log("Scan button clicked")
+                                hoverEnabled: true
+                                onEntered: parent.border.color = neonBlue
+                                onExited: if (modelData !== "SCAN") parent.border.color = "transparent"
+                                onClicked: console.log(modelData + " clicked")
                             }
                         }
                     }
                 }
+            }
 
-                // Match Result Panel
+            // Scan Area with padding
+            Rectangle {
+                id: scanArea
+                Layout.preferredWidth: root.width * 0.5
+                Layout.fillHeight: true
+                color: panelColor
+                border.color: neonBlue
+                border.width: borderWidth
+                radius: 8
+
+                // Inner glow
                 Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
+                    anchors.fill: parent
+                    anchors.margins: 2
                     color: "transparent"
-                    border.color: "#00FFFF"
+                    border.color: Qt.lighter(neonBlue, 1.5)
                     border.width: 1
-                    radius: 6
+                    radius: parent.radius - 2
+                    opacity: 0.5
+                }
 
-                    Column {
-                        anchors.fill: parent
-                        anchors.margins: root.width * 0.015
-                        spacing: root.height * 0.025
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: root.width * 0.03  // Increased inner margins
+                    spacing: root.height * 0.05
+
+                    // Face frame with animated border
+                    Rectangle {
+                        id: faceFrame
+                        width: parent.width * 0.9
+                        height: parent.height * 0.7
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        color: "#111"
+                        border.color: neonBlue
+                        border.width: 2
+                        radius: 8
+
+                        // Added margin around face frame
+                        anchors.topMargin: root.height * 0.02
+
+                        // Animated border effect
+                        Rectangle {
+                            id: pulseBorder
+                            anchors.fill: parent
+                            anchors.margins: -2
+                            radius: parent.radius + 2
+                            color: "transparent"
+                            border.color: neonBlue
+                            border.width: 2
+                            opacity: 0.7
+
+                            SequentialAnimation on border.width {
+                                loops: Animation.Infinite
+                                NumberAnimation { to: 6; duration: 1500; easing.type: Easing.InOutQuad }
+                                NumberAnimation { to: 2; duration: 1500; easing.type: Easing.InOutQuad }
+                            }
+
+                            SequentialAnimation on opacity {
+                                loops: Animation.Infinite
+                                NumberAnimation { to: 0.3; duration: 1500; easing.type: Easing.InOutQuad }
+                                NumberAnimation { to: 0.7; duration: 1500; easing.type: Easing.InOutQuad }
+                            }
+                        }
+
+                        // Placeholder image
+                        Image {
+                            anchors.fill: parent
+                            anchors.margins: 15  // Added margin around image
+                            source: "qrc:/assets/Face_placeholder.jpeg"
+                            fillMode: Image.PreserveAspectFit
+                        }
+                    }
+
+                    // Scan button with padding
+                    Rectangle {
+                        id: scanButton
+                        width: parent.width * 0.6
+                        height: root.height * 0.08
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        color: "transparent"
+                        border.color: neonBlue
+                        border.width: 2
+                        radius: height/2
+
+                        // Added margin above button
+                        anchors.topMargin: root.height * 0.03
+
+                        // Inner glow
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: 2
+                            color: "transparent"
+                            border.color: Qt.lighter(neonBlue, 1.5)
+                            border.width: 1
+                            radius: parent.radius - 2
+                            opacity: 0.7
+                        }
 
                         Text {
-                            text: "MATCH RESULT"
-                            color: "#00FFFF"
-                            font.pixelSize: root.width * 0.016
-                            font.bold: true
+                            text: "SCAN"
+                            anchors.centerIn: parent
+                            color: neonBlue
+                            font {
+                                pixelSize: root.width * 0.018
+                                family: "Courier New"
+                                weight: Font.Bold
+                                letterSpacing: 2
+                            }
                         }
 
-                        Rectangle {
-                            width: parent.width
-                            height: 1
-                            color: "#00FFFF"
+                        // Button effects
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onEntered: {
+                                scanButton.color = Qt.rgba(0, 0.95, 1, 0.1)
+                                scanButton.border.width = 3
+                            }
+                            onExited: {
+                                scanButton.color = "transparent"
+                                scanButton.border.width = 2
+                            }
+                            onClicked: console.log("Scan button clicked")
+                        }
+                    }
+                }
+            }
+
+            // Match Result Panel with padding
+            Rectangle {
+                id: resultPanel
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                color: panelColor
+                border.color: neonBlue
+                border.width: borderWidth
+                radius: 8
+
+                // Inner glow
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: 2
+                    color: "transparent"
+                    border.color: Qt.lighter(neonBlue, 1.5)
+                    border.width: 1
+                    radius: parent.radius - 2
+                    opacity: 0.5
+                }
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: root.width * 0.04  // Increased inner margins
+                    spacing: root.height * 0.03  // Increased spacing between elements
+
+                    // Match Result header
+                    Text {
+                        text: "MATCH RESULT"
+                        color: neonBlue
+                        font {
+                            pixelSize: root.width * 0.018
+                            family: "Courier New"
+                            weight: Font.Bold
+                            letterSpacing: 1
                         }
 
+                        // Added margin below header
+                        anchors.leftMargin: root.width * 0.01
+                        anchors.topMargin: root.height * 0.02
+                    }
+
+                    // Divider line
+                    Rectangle {
+                        width: parent.width * 0.95  // Slightly shorter line
+                        height: 1
+                        color: neonBlue
+                        opacity: 0.5
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+
+                    // Result details with spacing
+                    Column {
+                        width: parent.width
+                        spacing: root.height * 0.025  // Increased spacing between sections
+                        anchors.topMargin: root.height * 0.02
+
+                        // Name section
                         Column {
-                            spacing: root.height * 0.015
+                            width: parent.width
+                            spacing: 4  // Increased spacing between elements
 
                             Text {
                                 text: "NAME"
-                                color: "#00FFFF"
-                                font.pixelSize: root.width * 0.012
+                                color: neonBlue
+                                font {
+                                    pixelSize: root.width * 0.012
+                                    family: "Courier New"
+                                    weight: Font.Bold
+                                }
+                                opacity: 0.7
                             }
 
                             Text {
                                 text: "JOHN DOE"
-                                color: "#00FFFF"
-                                font.pixelSize: root.width * 0.018
-                                font.bold: true
+                                color: neonBlue
+                                font {
+                                    pixelSize: root.width * 0.016
+                                    family: "Courier New"
+                                    weight: Font.Bold
+                                }
                             }
+
+                            Rectangle {
+                                width: parent.width * 0.9
+                                height: 1
+                                color: neonBlue
+                                opacity: 0.2
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                        }
+
+                        // ID section
+                        Column {
+                            width: parent.width
+                            spacing: 4
 
                             Text {
                                 text: "ID"
-                                color: "#00FFFF"
-                                font.pixelSize: root.width * 0.012
+                                color: neonBlue
+                                font {
+                                    pixelSize: root.width * 0.012
+                                    family: "Courier New"
+                                    weight: Font.Bold
+                                }
+                                opacity: 0.7
                             }
 
                             Text {
                                 text: "A53207"
-                                color: "#00FFFF"
-                                font.pixelSize: root.width * 0.018
-                                font.bold: true
+                                color: neonBlue
+                                font {
+                                    pixelSize: root.width * 0.016
+                                    family: "Courier New"
+                                    weight: Font.Bold
+                                }
                             }
+
+                            Rectangle {
+                                width: parent.width * 0.9
+                                height: 1
+                                color: neonBlue
+                                opacity: 0.2
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                        }
+
+                        // Score section
+                        Column {
+                            width: parent.width
+                            spacing: 4
 
                             Text {
                                 text: "SCORE"
-                                color: "#00FFFF"
-                                font.pixelSize: root.width * 0.012
+                                color: neonBlue
+                                font {
+                                    pixelSize: root.width * 0.012
+                                    family: "Courier New"
+                                    weight: Font.Bold
+                                }
+                                opacity: 0.7
                             }
 
                             Text {
                                 text: "98%"
-                                color: "#00FFFF"
-                                font.pixelSize: root.width * 0.018
-                                font.bold: true
+                                color: neonBlue
+                                font {
+                                    pixelSize: root.width * 0.016
+                                    family: "Courier New"
+                                    weight: Font.Bold
+                                }
+                            }
+
+                            Rectangle {
+                                width: parent.width * 0.9
+                                height: 1
+                                color: neonBlue
+                                opacity: 0.2
+                                anchors.horizontalCenter: parent.horizontalCenter
                             }
                         }
                     }
