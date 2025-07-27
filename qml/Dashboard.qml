@@ -6,11 +6,9 @@ Item {
     id: appWindow
     width: Screen.width
     height: Screen.height
-    //minimumWidth: 800
-    //minimumHeight: 600
-    //title: "FACEINTEL Recognition System"
 
-    // Theme properties
+    // ==================== PROPERTIES ====================
+    // Theme Properties
     property color neonBlue: "#00f2ff"
     property color neonGreen: "#00ffaa"
     property color bgColor: "#0a0f1c"
@@ -20,140 +18,107 @@ Item {
     property real panelRadius: 8
     property real elementRadius: 6
 
-    // System state
+    // System Properties
     property int localMatches: 42
     property int onlineMatches: 15
     property int pendingSearches: 3
     property real matchAccuracy: 0.92
+    property string currentPage: "dashboard"
     property var recentMatches: [
         {name: "John Doe", id: "A53207", confidence: 0.982, source: "local", image: "qrc:/sample_faces/face1.jpg"},
         {name: "Jane Smith", id: "B72193", confidence: 0.957, source: "online", image: "qrc:/sample_faces/face2.jpg"},
         {name: "Alex Wong", id: "C39012", confidence: 0.921, source: "local", image: "qrc:/sample_faces/face3.jpg"}
     ]
 
-    // Responsive layout properties
+    // System Monitor Properties
+    property var systemMonitor: ({
+        cpuUsage: 45,
+        memoryUsage: 68,
+        gpuUsage: 32,
+        timeRange: "5m",
+        refresh: function() {
+            console.log("Refreshing data");
+            // Generate some random data for demo purposes
+            var newCpu = Math.min(100, Math.max(0, systemMonitor.cpuUsage + (Math.random() * 6 - 3)));
+            var newMem = Math.min(100, Math.max(0, systemMonitor.memoryUsage + (Math.random() * 4 - 2)));
+            var newGpu = Math.min(100, Math.max(0, systemMonitor.gpuUsage + (Math.random() * 8 - 4)));
+
+            systemMonitor.cpuUsage = Math.round(newCpu);
+            systemMonitor.memoryUsage = Math.round(newMem);
+            systemMonitor.gpuUsage = Math.round(newGpu);
+
+            // Update history arrays
+            systemMonitor.cpuHistory.shift();
+            systemMonitor.cpuHistory.push(systemMonitor.cpuUsage);
+            systemMonitor.memoryHistory.shift();
+            systemMonitor.memoryHistory.push(systemMonitor.memoryUsage);
+            systemMonitor.gpuHistory.shift();
+            systemMonitor.gpuHistory.push(systemMonitor.gpuUsage);
+
+            activityChart.requestPaint();
+        },
+        cpuHistory: [45, 48, 52, 50, 47, 45, 43, 40, 42, 45],
+        memoryHistory: [68, 67, 66, 67, 68, 69, 68, 67, 68, 68],
+        gpuHistory: [32, 30, 28, 30, 32, 35, 33, 32, 31, 32]
+    })
+
+    // Layout Properties
     property bool isMobile: width < 900
     property bool isTablet: width >= 900 && width < 1200
     property bool isDesktop: width >= 1200
-
-    // Font sizes
     property int titleFontSize: isMobile ? 16 : isTablet ? 18 : 20
     property int bodyFontSize: isMobile ? 12 : isTablet ? 14 : 16
     property int smallFontSize: isMobile ? 10 : 12
-
-    // Spacing constants
     property real outerMargin: 15
     property real panelPadding: 15
     property real elementSpacing: 10
     property real innerElementSpacing: 5
 
-    // Background
+    // ==================== MAIN UI ====================
     Rectangle {
         anchors.fill: parent
         color: bgColor
     }
 
-    // Main layout
     GridLayout {
         id: mainLayout
-        anchors {
-            fill: parent
-            margins: outerMargin
-        }
+        anchors.fill: parent
+        anchors.margins: outerMargin
         columns: isMobile ? 1 : 2
         columnSpacing: elementSpacing
         rowSpacing: elementSpacing
 
-        // ==================== TOP ROW ====================
-        // Statistics Panel
+        // Navigation Panel
         DashboardPanel {
             id: statsPanel
-            title: "MATCH STATISTICS"
+            title: "NAVIGATION"
             Layout.fillWidth: true
             Layout.preferredHeight: isMobile ? 180 : 200
-            // In the Statistics Panel section (replace the existing GridLayout content):
+
             GridLayout {
                 anchors.fill: parent
-                anchors.margins: 15
+                anchors.margins: panelPadding
                 columns: isMobile ? 2 : 4
-                columnSpacing: 15
-                rowSpacing: 15
+                columnSpacing: elementSpacing
+                rowSpacing: elementSpacing
 
-                NavigationButton {
-                    icon: "🏠"
-                    text: "Home"
-                    onClicked: currentPage = "dashboard"
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
+                Repeater {
+                    model: [
+                        {icon: "🏠", text: "Home", page: "dashboard"},
+                        {icon: "🔍", text: "Scan", page: "scan"},
+                        {icon: "🗄️", text: "Database", page: "database"},
+                        {icon: "⚙️", text: "Settings", page: "settings"}
+                    ]
 
-                NavigationButton {
-                    icon: "🔍"
-                    text: "Scan"
-                    onClicked: currentPage = "scan"
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
-
-                NavigationButton {
-                    icon: "🗄️"
-                    text: "Database"
-                    onClicked: currentPage = "database"
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
-
-                NavigationButton {
-                    icon: "⚙️"
-                    text: "Settings"
-                    onClicked: currentPage = "settings"
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
-            }
-
-            // Add this new component definition at the bottom with the other components:
-            component NavigationButton: Rectangle {
-                property string icon
-                property string text
-                signal clicked
-
-                radius: elementRadius
-                color: Qt.darker(panelColor, 1.1)
-                border.color: neonBlue
-                border.width: 1
-
-                Column {
-                    anchors.centerIn: parent
-                    spacing: innerElementSpacing
-
-                    Text {
-                        text: icon
-                        font.pixelSize: bodyFontSize + 10
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-
-                    Text {
-                        text: parent.parent.text
-                        color: neonBlue
-                        font.pixelSize: bodyFontSize
-                        font.bold: true
-                        font.family: "Courier New"
-                        anchors.horizontalCenter: parent.horizontalCenter
+                    NavigationButton {
+                        icon: modelData.icon
+                        text: modelData.text
+                        onClicked: currentPage = modelData.page
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                     }
                 }
-
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onEntered: parent.color = highlightColor
-                    onExited: parent.color = Qt.darker(panelColor, 1.1)
-                    onClicked: parent.clicked()
-                }
             }
-
-            // Add this property to track current page:
-            property string currentPage: "dashboard"
         }
 
         // Database Status Panel
@@ -167,32 +132,238 @@ Item {
                 anchors.fill: parent
                 spacing: elementSpacing
 
-                DatabaseStatusTile {
-                    name: "Local Facial Database"
-                    entries: "12,453"
-                    lastUpdated: "Today"
-                    status: "Online"
-                    Layout.fillWidth: true
+                Repeater {
+                    model: [
+                        {name: "Local Facial Database", entries: "12,453", lastUpdated: "Today", status: "Online"},
+                        {name: "Online Recognition API", entries: "∞", lastUpdated: "Live", status: "Connected"}
+                    ]
+
+                    DatabaseStatusTile {
+                        name: modelData.name
+                        entries: modelData.entries
+                        lastUpdated: modelData.lastUpdated
+                        status: modelData.status
+                        Layout.fillWidth: true
+                    }
                 }
 
-                DatabaseStatusTile {
-                    name: "Online Recognition API"
-                    entries: "∞"
-                    lastUpdated: "Live"
-                    status: "Connected"
-                    Layout.fillWidth: true
-                }
-
-                Item { Layout.fillHeight: true } // Spacer
+                Item { Layout.fillHeight: true }
             }
         }
 
         // ==================== BOTTOM ROW ====================
-        // Recent Matches Panel
+        // System Activity Panel (left side)
+        DashboardPanel {
+            id: activityPanel
+            title: "SYSTEM ACTIVITY"
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: !isMobile
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: panelPadding
+                spacing: elementSpacing
+
+                // Stats Header Row
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: elementSpacing * 2
+
+                    StatisticTile {
+                        title: "CPU Usage"
+                        value: systemMonitor.cpuUsage + "%"
+                        statcolor: systemMonitor.cpuUsage > 80 ? "#FF5555" : neonGreen
+                        Layout.preferredWidth: 120
+                    }
+
+                    StatisticTile {
+                        title: "Memory"
+                        value: systemMonitor.memoryUsage + "%"
+                        statcolor: systemMonitor.memoryUsage > 85 ? "#FF5555" : neonBlue
+                        Layout.preferredWidth: 120
+                    }
+
+                    StatisticTile {
+                        title: "GPU Load"
+                        value: systemMonitor.gpuUsage + "%"
+                        statcolor: systemMonitor.gpuUsage > 75 ? "#FF5555" : "#AA00FF"
+                        Layout.preferredWidth: 120
+                    }
+
+                    Item { Layout.fillWidth: true } // Spacer
+                }
+
+                // Main Chart Area
+                Rectangle {
+                    id: chartContainer
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: "transparent"
+                    border.color: neonBlue
+                    border.width: 1
+                    radius: elementRadius
+
+                    Canvas {
+                        id: activityChart
+                        anchors.fill: parent
+                        anchors.margins: 10
+
+                        property var timePoints: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] // Last 10 seconds
+                        property var cpuData: systemMonitor.cpuHistory
+                        property var memoryData: systemMonitor.memoryHistory
+                        property var gpuData: systemMonitor.gpuHistory
+
+                        onPaint: {
+                            var ctx = getContext("2d")
+                            ctx.reset()
+
+                            // Draw grid lines
+                            ctx.strokeStyle = Qt.rgba(0, 0.8, 1, 0.2)
+                            ctx.lineWidth = 1
+
+                            // Horizontal grid lines
+                            for (var y = 0; y <= 100; y += 20) {
+                                ctx.beginPath()
+                                var yPos = height - (y/100 * height)
+                                ctx.moveTo(0, yPos)
+                                ctx.lineTo(width, yPos)
+                                ctx.stroke()
+
+                                // Y-axis labels
+                                ctx.fillStyle = neonBlue
+                                ctx.font = smallFontSize + "px Courier New"
+                                ctx.fillText(y + "%", 5, yPos - 5)
+                            }
+
+                            // Draw data lines
+                            drawLine(ctx, cpuData, neonGreen)
+                            drawLine(ctx, memoryData, neonBlue)
+                            drawLine(ctx, gpuData, "#AA00FF")
+
+                            // Draw legend
+                            drawLegend(ctx)
+                        }
+
+                        function drawLine(ctx, data, color) {
+                            if (data.length === 0) return
+
+                            ctx.strokeStyle = color
+                            ctx.lineWidth = 2
+                            ctx.beginPath()
+
+                            var xStep = width / (timePoints.length - 1)
+                            var firstY = height - (data[0]/100 * height)
+                            ctx.moveTo(0, firstY)
+
+                            for (var i = 1; i < data.length; i++) {
+                                var x = i * xStep
+                                var y = height - (data[i]/100 * height)
+                                ctx.lineTo(x, y)
+                            }
+
+                            ctx.stroke()
+                        }
+
+                        function drawLegend(ctx) {
+                            var legendItems = [
+                                { text: "CPU", color: neonGreen },
+                                { text: "Memory", color: neonBlue },
+                                { text: "GPU", color: "#AA00FF" }
+                            ]
+
+                            var boxSize = 15
+                            var padding = 10
+                            var startX = width - 150
+                            var startY = 10
+
+                            ctx.font = smallFontSize + "px Courier New"
+
+                            legendItems.forEach(function(item, index) {
+                                var y = startY + index * (boxSize + padding)
+
+                                // Color box
+                                ctx.fillStyle = item.color
+                                ctx.fillRect(startX, y, boxSize, boxSize)
+
+                                // Text
+                                ctx.fillStyle = neonBlue
+                                ctx.fillText(item.text, startX + boxSize + 5, y + boxSize - 3)
+                            })
+                        }
+                    }
+                }
+
+                // Timeline controls
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: elementSpacing
+
+                    Repeater {
+                        model: ["1m", "5m", "15m", "30m", "1h"]
+                        Button {
+                            text: modelData
+                            font.family: "Courier New"
+                            font.pixelSize: smallFontSize
+                            background: Rectangle {
+                                color: parent.pressed ? highlightColor :
+                                       parent.hovered ? Qt.darker(panelColor, 1.2) :
+                                       Qt.darker(panelColor, 1.1)
+                                radius: elementRadius
+                                border.color: neonBlue
+                                border.width: 1
+                            }
+                            contentItem: Text {
+                                text: parent.text
+                                color: neonBlue
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                font: parent.font
+                            }
+                            onClicked: systemMonitor.timeRange = modelData
+                        }
+                    }
+
+                    Item { Layout.fillWidth: true } // Spacer
+
+                    Button {
+                        text: "⟳"
+                        font.pixelSize: bodyFontSize
+                        background: Rectangle {
+                            color: parent.pressed ? highlightColor :
+                                   parent.hovered ? Qt.darker(panelColor, 1.2) :
+                                   Qt.darker(panelColor, 1.1)
+                            radius: elementRadius
+                            border.color: neonBlue
+                            border.width: 1
+                        }
+                        contentItem: Text {
+                            text: parent.text
+                            color: neonBlue
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font: parent.font
+                        }
+                        onClicked: systemMonitor.refresh()
+                    }
+                }
+            }
+
+            // Timer to update chart
+            Timer {
+                interval: 1000
+                running: true
+                repeat: true
+                onTriggered: {
+                    systemMonitor.refresh();
+                }
+            }
+        }
+
+        // Recent Matches Panel (right side)
         DashboardPanel {
             id: matchesPanel
             title: "RECENT MATCHES"
-            Layout.columnSpan: isMobile ? 1 : 2
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -202,7 +373,6 @@ Item {
                 clip: true
                 model: recentMatches
                 spacing: innerElementSpacing
-
                 delegate: MatchResultTile {
                     width: matchesList.width
                     height: isMobile ? 100 : 120
@@ -210,28 +380,13 @@ Item {
                 }
             }
         }
-
-        // System Activity Panel (only shown on desktop)
-        DashboardPanel {
-            id: activityPanel
-            title: "SYSTEM ACTIVITY"
-            Layout.columnSpan: isMobile ? 1 : 2
-            Layout.fillWidth: true
-            Layout.preferredHeight: isMobile ? 0 : 200
-            visible: !isMobile
-
-            ActivityChartPlaceholder {
-                anchors.fill: parent
-            }
-        }
     }
 
-    // ==================== COMPONENT DEFINITIONS ====================
+    // ==================== COMPONENTS ====================
     component DashboardPanel: Rectangle {
         property string title
         property alias contentItem: contentContainer.data
 
-        Layout.fillWidth: true
         color: panelColor
         border.color: neonBlue
         border.width: borderWidth
@@ -241,18 +396,16 @@ Item {
             anchors.fill: parent
             spacing: elementSpacing
 
-            // Panel header
             Text {
                 text: title
                 color: neonBlue
                 font.pixelSize: titleFontSize
-                font.family: "Courier New"
                 font.bold: true
+                font.family: "Courier New"
                 leftPadding: panelPadding
                 topPadding: panelPadding
             }
 
-            // Content area
             Item {
                 id: contentContainer
                 Layout.fillWidth: true
@@ -300,13 +453,52 @@ Item {
         }
     }
 
+    component NavigationButton: Rectangle {
+        property string icon
+        property string text
+        signal clicked
+
+        radius: elementRadius
+        color: Qt.darker(panelColor, 1.1)
+        border.color: neonBlue
+        border.width: 1
+
+        Column {
+            anchors.centerIn: parent
+            spacing: innerElementSpacing
+
+            Text {
+                text: icon
+                font.pixelSize: bodyFontSize + 10
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            Text {
+                text: parent.parent.text
+                color: neonBlue
+                font.pixelSize: bodyFontSize
+                font.bold: true
+                font.family: "Courier New"
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: parent.color = highlightColor
+            onExited: parent.color = Qt.darker(panelColor, 1.1)
+            onClicked: parent.clicked()
+        }
+    }
+
     component DatabaseStatusTile: Rectangle {
         property string name
         property var entries
         property string lastUpdated
         property string status
 
-        Layout.preferredHeight: 70
+        height: 70
         radius: elementRadius
         color: Qt.darker(panelColor, 1.1)
         border.color: neonBlue
@@ -333,7 +525,6 @@ Item {
 
                 Column {
                     spacing: innerElementSpacing
-
                     Text {
                         text: "Entries:"
                         color: neonBlue
@@ -341,7 +532,6 @@ Item {
                         font.pixelSize: smallFontSize
                         font.family: "Courier New"
                     }
-
                     Text {
                         text: entries
                         color: neonBlue
@@ -352,7 +542,6 @@ Item {
 
                 Column {
                     spacing: innerElementSpacing
-
                     Text {
                         text: "Last Updated:"
                         color: neonBlue
@@ -360,7 +549,6 @@ Item {
                         font.pixelSize: smallFontSize
                         font.family: "Courier New"
                     }
-
                     Text {
                         text: lastUpdated
                         color: neonBlue
@@ -406,7 +594,6 @@ Item {
             anchors.margins: panelPadding / 2
             spacing: elementSpacing
 
-            // Face thumbnail
             Rectangle {
                 width: isMobile ? 80 : 100
                 height: width
@@ -423,7 +610,6 @@ Item {
                 }
             }
 
-            // Match details
             Column {
                 width: parent.width - (isMobile ? 110 : 130)
                 spacing: innerElementSpacing
@@ -462,22 +648,6 @@ Item {
                     font.family: "Courier New"
                 }
             }
-        }
-    }
-
-    component ActivityChartPlaceholder: Rectangle {
-        color: Qt.darker(panelColor, 1.1)
-        border.color: neonBlue
-        border.width: 1
-        radius: elementRadius
-
-        Text {
-            text: "ACTIVITY CHART AREA"
-            color: neonBlue
-            opacity: 0.5
-            font.pixelSize: bodyFontSize
-            font.family: "Courier New"
-            anchors.centerIn: parent
         }
     }
 }
