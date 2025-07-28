@@ -37,7 +37,7 @@ Item {
         gpuUsage: 32,
         timeRange: "5m",
         refresh: function() {
-            console.log("Refreshing data");
+            //console.log("Refreshing data");
             // Generate some random data for demo purposes
             var newCpu = Math.min(100, Math.max(0, systemMonitor.cpuUsage + (Math.random() * 6 - 3)));
             var newMem = Math.min(100, Math.max(0, systemMonitor.memoryUsage + (Math.random() * 4 - 2)));
@@ -104,16 +104,28 @@ Item {
 
                 Repeater {
                     model: [
-                        {icon: "🏠", text: "Home", page: "dashboard"},
-                        {icon: "🔍", text: "Scan", page: "scan"},
-                        {icon: "🗄️", text: "Database", page: "database"},
-                        {icon: "⚙️", text: "Settings", page: "settings"}
+                        {icon: "🏠", text: "Home", page: "Dashboard"},
+                        {icon: "🔍", text: "Scan", page: "FaceScan"},
+                        {icon: "⚙️", text: "OSINT", page: "OSINTLookup"},
+                        {icon: "🗄️", text: "Database", page: "Database"},
+                        {icon: "⚙️", text: "Settings", page: "Settings"}
+
                     ]
 
                     NavigationButton {
                         icon: modelData.icon
                         text: modelData.text
-                        onClicked: currentPage = modelData.page
+                        onClicked: {
+                            if (modelData.page === "FaceScan") {
+                                stackView.push("FaceScan.qml")
+                            }
+                            else if (modelData.page === "OSINTLookup") {
+                                stackView.push("OSINTLookup.qml")
+                            }
+                            else {
+                                currentPage = modelData.page
+                            }
+                        }
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                     }
@@ -232,7 +244,7 @@ Item {
 
                                 // Y-axis labels
                                 ctx.fillStyle = neonBlue
-                                ctx.font = smallFontSize + "px Courier New"
+                                ctx.font = smallFontSize + "px 'Liberation Mono'";
                                 ctx.fillText(y + "%", 5, yPos - 5)
                             }
 
@@ -277,7 +289,7 @@ Item {
                             var startX = width - 150
                             var startY = 10
 
-                            ctx.font = smallFontSize + "px Courier New"
+                            ctx.font = smallFontSize + "px 'Liberation Mono'";
 
                             legendItems.forEach(function(item, index) {
                                 var y = startY + index * (boxSize + padding)

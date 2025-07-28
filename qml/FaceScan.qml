@@ -197,10 +197,10 @@ Item {
                 Column {
                     anchors.centerIn: parent
                     spacing: root.height * 0.05
-                    width: parent.width * 0.9  // Added width constraint
+                    width: parent.width * 0.9
 
                     Repeater {
-                        model: ["HOME", "SCAN", "DATABASE", "SETTINGS"]
+                        model: ["HOME", "SCAN", "DATABASE", "SETTINGS", "OSINT"]
                         delegate: Rectangle {
                             width: parent.width
                             height: root.height * 0.06
@@ -238,7 +238,31 @@ Item {
                                 hoverEnabled: true
                                 onEntered: parent.border.color = neonBlue
                                 onExited: if (modelData !== "SCAN") parent.border.color = "transparent"
-                                onClicked: console.log(modelData + " clicked")
+                                onClicked: {
+                                    console.log(modelData + " clicked");
+
+                                    // Navigation logic
+                                    if (modelData === "HOME") {
+                                        // Navigate to Dashboard.qml
+                                        stackView.push("Dashboard.qml"); // If using StackView
+                                    }
+                                    else if (modelData === "SCAN") {
+                                        // Navigate to FaceScan.qml
+                                        stackView.push("FaceScan.qml"); // If using StackView
+                                    }
+                                    else if (modelData === "DATABASE") {
+                                        // Navigate to Database.qml
+                                        stackView.push("Database.qml");
+                                    }
+                                    else if (modelData === "OSINT") {
+                                        stackView.push("OSINTLookup.qml")
+
+                                    }
+                                    else if (modelData === "SETTINGS") {
+                                        // Navigate to Settings.qml
+                                        stackView.push("Settings.qml");
+                                    }
+                                }
                             }
                         }
                     }
