@@ -120,7 +120,7 @@ Item {
                 currentIndex: 1
 
                 Repeater {
-                    model: ["HOME", "OSINT LOOKUP", "SCAN"]
+                    model: ["HOME", "OSINT LOOKUP"]
                     TabButton {
                         text: modelData
                         font {
@@ -137,6 +137,22 @@ Item {
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                             font: parent.font
+
+                        }
+                        onClicked: {
+                            if (!stackView) {
+                                console.warn("StackView not available")
+                                return
+                            }
+
+                            var component = Qt.createComponent("qrc:/qml/Dashboard.qml")
+                            if (component.status === Component.Ready) {
+                                var dashboard = component.createObject(stackView, { stackView: stackView })
+                                stackView.push(dashboard)
+                            } else {
+                                console.error("Failed to load Dashboard.qml:", component.errorString())
+                            }
+
                         }
                     }
                 }
@@ -169,7 +185,7 @@ Item {
                             TextField {
                                 anchors.fill: parent
                                 anchors.margins: 10
-                                placeholderText: "username"
+                                placeholderText: "username or email or phone number"
                                 placeholderTextColor: Qt.lighter(neonBlue, 1.3)
                                 color: neonBlue
                                 font {

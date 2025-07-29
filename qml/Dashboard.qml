@@ -2,10 +2,12 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+
 Item {
     id: appWindow
-    width: Screen.width
-    height: Screen.height
+    width: parent ? parent.width : 1280
+    height: parent ? parent.height : 720
+
 
     // ==================== PROPERTIES ====================
     // Theme Properties
@@ -116,16 +118,29 @@ Item {
                         icon: modelData.icon
                         text: modelData.text
                         onClicked: {
-                            if (modelData.page === "FaceScan") {
-                                stackView.push("FaceScan.qml")
+                            if (!stackView) {
+                                console.warn("No StackView passed to Dashboard")
+                                return
                             }
-                            else if (modelData.page === "OSINTLookup") {
-                                stackView.push("OSINTLookup.qml")
+
+                            var pageUrl = ""
+                            switch (modelData.page) {
+                                case "FaceScan": pageUrl = "qrc:/qml/FaceScan.qml"; break
+                                case "OSINTLookup": pageUrl = "qrc:/qml/OSINTLookup.qml"; break
+                                default: return
                             }
-                            else {
-                                currentPage = modelData.page
+
+                            var component = Qt.createComponent(pageUrl)
+                            if (component.status === Component.Ready) {
+                                var nextPage = component.createObject(stackView, {
+                                    stackView: stackView
+                                })
+                                stackView.push(nextPage)
+                            } else {
+                                console.error("Failed to load", pageUrl, component.errorString())
                             }
                         }
+
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                     }

@@ -13,10 +13,16 @@ ApplicationWindow {
         anchors.fill: parent
 
         Component.onCompleted: {
-            var loginPage = Qt.createComponent("qrc:/qml/LoginPage.qml").createObject(stackView, {
-                stackView: stackView
-            })
-            stackView.push(loginPage)
+            // Use full path with qrc:/ prefix
+            var component = Qt.createComponent("qrc:/qml/LoginPage.qml")
+            if (component.status === Component.Ready) {
+                var loginPage = component.createObject(stackView, {
+                    stackView: stackView
+                })
+                stackView.push(loginPage)
+            } else {
+                console.error("Error loading LoginPage:", component.errorString())
+            }
         }
     }
 }

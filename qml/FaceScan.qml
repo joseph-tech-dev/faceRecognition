@@ -5,8 +5,9 @@ import QtQuick.Window 2.15
 
 Item {
     id: root
-    width: Screen.width
-    height: Screen.height
+    width: parent ? parent.width : 1280
+    height: parent ? parent.height : 720
+    property StackView stackView
 
     // Custom properties for theming
     property color neonBlue: "#00f2ff"
