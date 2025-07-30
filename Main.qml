@@ -5,7 +5,7 @@ ApplicationWindow {
     visible: true
     width: 1280
     height: 700
-    title: "XPERSKEY"
+    title: "ZEPHIX – Precision in Every Pixel."
     color: "black"
 
     StackView {

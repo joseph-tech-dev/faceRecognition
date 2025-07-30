@@ -9,14 +9,16 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Find Qt modules
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Sql Quick QuickControls2)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(appFaceIntelSystem
     main.cpp
+    Auth/AuthManager.cpp
     resources/qml.qrc
 )
+target_include_directories(appFaceIntelSystem PRIVATE Auth)
 
 qt_add_qml_module(appFaceIntelSystem
     URI FaceIntelSystem
@@ -37,8 +39,9 @@ set_target_properties(appFaceIntelSystem PROPERTIES
 )
 
 target_link_libraries(appFaceIntelSystem
-    PRIVATE Qt6::Core Qt6::Gui Qt6::Quick Qt6::QuickControls2
+    PRIVATE Qt6::Core Qt6::Gui Qt6::Quick Qt6::QuickControls2 Qt6::Sql
 )
+
 
 include(GNUInstallDirs)
 install(TARGETS appFaceIntelSystem

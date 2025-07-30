@@ -7,7 +7,7 @@ Item {
     height: parent ? parent.height : 600
     property StackView stackView
 
-    // Custom properties matching FACEINTEL theme
+    // Custom theme properties
     property color neonBlue: "#00f2ff"
     property color neonBlueDark: "#006a71"
     property color bgColor: "#0a0f1c"
@@ -16,13 +16,12 @@ Item {
     property real borderWidth: 1.5
     property real globalMargin: 15
 
-    // Background with space texture
+    // ====================== BACKGROUND ======================
     Rectangle {
         id: background
         anchors.fill: parent
         color: bgColor
 
-        // Subtle grid pattern
         Canvas {
             anchors.fill: parent
             opacity: 0.09
@@ -30,16 +29,12 @@ Item {
                 var ctx = getContext("2d")
                 ctx.strokeStyle = neonBlue
                 ctx.lineWidth = 1
-
-                // Vertical lines
                 for (var x = 0; x < width; x += 30) {
                     ctx.beginPath()
                     ctx.moveTo(x, 0)
                     ctx.lineTo(x, height)
                     ctx.stroke()
                 }
-
-                // Horizontal lines
                 for (var y = 0; y < height; y += 30) {
                     ctx.beginPath()
                     ctx.moveTo(0, y)
@@ -50,7 +45,7 @@ Item {
         }
     }
 
-    // Outer glow effect for login box
+    // ====================== GLOW BOX ======================
     Rectangle {
         width: 420
         height: 320
@@ -61,23 +56,22 @@ Item {
 
         SequentialAnimation on opacity {
             loops: Animation.Infinite
-            NumberAnimation { to: 0.25; duration: 2000; easing.type: Easing.InOutQuad }
-            NumberAnimation { to: 0.15; duration: 2000; easing.type: Easing.InOutQuad }
+            NumberAnimation { to: 0.25; duration: 2 }
+            NumberAnimation { to: 0.15; duration: 2 }
         }
     }
 
-    // Login box
+    // ====================== LOGIN BOX ======================
     Rectangle {
         id: loginBox
         width: 400
-        height: 300
+        height: 360
         anchors.centerIn: parent
         radius: 20
         color: panelColor
         border.color: neonBlue
         border.width: borderWidth
 
-        // Inner glow
         Rectangle {
             anchors.fill: parent
             anchors.margins: 2
@@ -90,33 +84,20 @@ Item {
 
         ColumnLayout {
             anchors.centerIn: parent
-            spacing: 25
+            spacing: 20
 
-            // Login title with glow effect
+            // === Title ===
             Text {
-                text: "FACEINTEL LOGIN"
+                text: "ZEPHIX LOGIN"
                 color: neonBlue
-                font {
-                    pixelSize: 28
-                    family: "Courier New"
-                    weight: Font.Bold
-                    letterSpacing: 2
-                }
+                font.pixelSize: 28
+                font.family: "Courier New"
+                font.weight: Font.Bold
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
-
-                Rectangle {
-                    width: parent.width * 0.6
-                    height: 1
-                    color: neonBlue
-                    opacity: 0.5
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 5
-                }
             }
 
-            // Username input
+            // === Username Field ===
             Rectangle {
                 width: 280
                 height: 45
@@ -125,7 +106,6 @@ Item {
                 border.color: neonBlue
                 border.width: 1
 
-                // Inner glow
                 Rectangle {
                     anchors.fill: parent
                     anchors.margins: 2
@@ -138,16 +118,14 @@ Item {
 
                 RowLayout {
                     anchors.fill: parent
-                    spacing: 10
                     anchors.leftMargin: 10
+                    spacing: 10
 
                     Image {
                         source: "qrc:/assets/icons/user.png"
                         width: 20
                         height: 20
                         fillMode: Image.PreserveAspectFit
-                        Layout.alignment: Qt.AlignVCenter
-                       // color: neonBlue
                     }
 
                     TextField {
@@ -155,21 +133,18 @@ Item {
                         placeholderText: "USERNAME"
                         placeholderTextColor: Qt.lighter(neonBlue, 1.5)
                         color: neonBlue
-                        font {
-                            pixelSize: 16
-                            family: "Courier New"
-                            weight: Font.Bold
-                            capitalization: Font.AllUppercase
-                        }
+                        font.pixelSize: 16
+                        font.family: "Courier New"
+                        font.weight: Font.Bold
+                        font.capitalization: Font.AllUppercase
                         background: Rectangle { color: "transparent" }
                         verticalAlignment: Text.AlignVCenter
                         Layout.fillWidth: true
-                        Layout.rightMargin: 10
                     }
                 }
             }
 
-            // Password input
+            // === Password Field ===
             Rectangle {
                 width: 280
                 height: 45
@@ -178,7 +153,6 @@ Item {
                 border.color: neonBlue
                 border.width: 1
 
-                // Inner glow
                 Rectangle {
                     anchors.fill: parent
                     anchors.margins: 2
@@ -191,39 +165,34 @@ Item {
 
                 RowLayout {
                     anchors.fill: parent
-                    spacing: 10
                     anchors.leftMargin: 10
+                    spacing: 10
 
                     Image {
                         source: "qrc:/assets/icons/lock.png"
                         width: 20
                         height: 20
                         fillMode: Image.PreserveAspectFit
-                        Layout.alignment: Qt.AlignVCenter
-                        //color: neonBlue
                     }
 
                     TextField {
                         id: passwordInput
                         placeholderText: "PASSWORD"
-                        placeholderTextColor: Qt.lighter(neonBlue, 1.5)
                         echoMode: TextInput.Password
+                        placeholderTextColor: Qt.lighter(neonBlue, 1.5)
                         color: neonBlue
-                        font {
-                            pixelSize: 16
-                            family: "Courier New"
-                            weight: Font.Bold
-                            capitalization: Font.AllUppercase
-                        }
+                        font.pixelSize: 16
+                        font.family: "Courier New"
+                        font.weight: Font.Bold
+                        font.capitalization: Font.AllUppercase
                         background: Rectangle { color: "transparent" }
                         verticalAlignment: Text.AlignVCenter
                         Layout.fillWidth: true
-                        Layout.rightMargin: 10
                     }
                 }
             }
 
-            // Login button with glow effect
+            // === Login Button ===
             Rectangle {
                 id: loginButton
                 width: 200
@@ -234,7 +203,6 @@ Item {
                 border.width: 2
                 Layout.alignment: Qt.AlignHCenter
 
-                // Inner glow
                 Rectangle {
                     anchors.fill: parent
                     anchors.margins: 2
@@ -249,12 +217,10 @@ Item {
                     text: "AUTHENTICATE"
                     anchors.centerIn: parent
                     color: neonBlue
-                    font {
-                        pixelSize: 18
-                        family: "Courier New"
-                        weight: Font.Bold
-                        letterSpacing: 1
-                    }
+                    font.pixelSize: 18
+                    font.family: "Courier New"
+                    font.weight: Font.Bold
+                    //letterSpacing: 1
                 }
 
                 MouseArea {
@@ -269,47 +235,32 @@ Item {
                         loginButton.border.width = 2
                     }
                     onClicked: {
-                        if (usernameInput.text === "admin" && passwordInput.text === "1234") {
-                            console.log("Login successful")
-                            stackView.push("qrc:/qml/Dashboard.qml")
-                        } else {
-                            console.log("Invalid credentials")
-                            // Add error animation
-                            errorAnimation.start()
-                        }
+                        authManager.login(usernameInput.text, passwordInput.text)
                     }
                 }
 
                 SequentialAnimation {
                     id: errorAnimation
                     loops: 2
-                    PropertyAnimation {
-                        target: loginButton
-                        property: "x"
-                        from: loginButton.x
-                        to: loginButton.x - 5
-                        duration: 50
-                    }
-                    PropertyAnimation {
-                        target: loginButton
-                        property: "x"
-                        from: loginButton.x - 5
-                        to: loginButton.x + 5
-                        duration: 100
-                    }
-                    PropertyAnimation {
-                        target: loginButton
-                        property: "x"
-                        from: loginButton.x + 5
-                        to: loginButton.x
-                        duration: 50
-                    }
+                    PropertyAnimation { target: loginButton; property: "x"; from: loginButton.x; to: loginButton.x - 5; duration: 50 }
+                    PropertyAnimation { target: loginButton; property: "x"; from: loginButton.x - 5; to: loginButton.x + 5; duration: 100 }
+                    PropertyAnimation { target: loginButton; property: "x"; from: loginButton.x + 5; to: loginButton.x; duration: 50 }
                 }
+            }
+
+            // === Error Label ===
+            Text {
+                id: errorLabel
+                text: ""
+                color: "red"
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                Layout.alignment: Qt.AlignHCenter
             }
         }
     }
 
-    // Animated particles matching FACEINTEL theme
+    // === Animated background particles ===
     Repeater {
         model: 100
         delegate: Rectangle {
@@ -323,16 +274,8 @@ Item {
 
             SequentialAnimation on opacity {
                 loops: Animation.Infinite
-                NumberAnimation {
-                    from: opacity;
-                    to: opacity * 0.5;
-                    duration: 1000 + Math.random() * 2000
-                }
-                NumberAnimation {
-                    from: opacity * 0.5;
-                    to: opacity;
-                    duration: 1000 + Math.random() * 2000
-                }
+                NumberAnimation { from: opacity; to: opacity * 0.5; duration: 1000 + Math.random() * 2000 }
+                NumberAnimation { from: opacity * 0.5; to: opacity; duration: 1000 + Math.random() * 2000 }
             }
 
             PropertyAnimation on x {
@@ -343,4 +286,20 @@ Item {
             }
         }
     }
+
+    // === Signal connection to AuthManager ===
+    Connections {
+        target: authManager
+
+        function onLoginSuccess() {
+            stackView.push("qrc:/qml/Dashboard.qml")
+        }
+
+        function onLoginFailed(reason) {
+            console.log("Login failed:", reason)
+            errorLabel.text = reason
+            errorAnimation.start()
+        }
+    }
+
 }

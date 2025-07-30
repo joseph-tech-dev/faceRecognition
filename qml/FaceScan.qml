@@ -67,7 +67,7 @@ Item {
             color: "transparent"
             border.color: neonBlue
             border.width: borderWidth
-            radius: 2
+            radius: 4
 
             // Inner glow effect using a lighter border
             Rectangle {
@@ -86,7 +86,7 @@ Item {
 
                 // System name
                 Text {
-                    text: "FACEINTEL.SYSTEM"
+                    text: "ZEPHIX"
                     color: neonBlue
                     font {
                         pixelSize: root.width * 0.022
