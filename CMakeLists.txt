@@ -16,6 +16,7 @@ qt_standard_project_setup(REQUIRES 6.8)
 qt_add_executable(appFaceIntelSystem
     main.cpp
     Auth/AuthManager.cpp
+    OSINT/OsintManager.cpp
     resources/qml.qrc
 )
 target_include_directories(appFaceIntelSystem PRIVATE Auth)
