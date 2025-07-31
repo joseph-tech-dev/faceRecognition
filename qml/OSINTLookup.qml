@@ -55,7 +55,6 @@ Item {
                 Layout.fillWidth: true
                 height: 50
                 color: "transparent"
-
                 RowLayout {
                     anchors.fill: parent
                     spacing: 20
@@ -67,6 +66,38 @@ Item {
                         font.pixelSize: 18
                         font.letterSpacing: 1
                         color: neonBlue
+                    }
+
+                    Rectangle {
+                        width: 80
+                        height: 30
+                        radius: 4
+                        color: Qt.darker(panelColor, 1.2)
+                        border.color: neonBlue
+                        border.width: borderWidth
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "Home"
+                            color: neonBlue
+                            font.family: "Courier New"
+                            font.pixelSize: 14
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: parent.color = Qt.rgba(0, 1, 1, 0.15)
+                            onExited: parent.color = Qt.darker(panelColor, 1.2)
+                            onClicked: {
+                                if (stackView) {
+                                    stackView.pop()
+                                } else {
+                                    console.warn("No stackView available to pop")
+                                }
+                            }
+                        }
                     }
 
                     Item { Layout.fillWidth: true }
@@ -193,7 +224,7 @@ Item {
                                     }
 
                                     Text {
-                                        text: modelData.data || modelData.status === 200 || "No details"
+                                        text: modelData.data || modelData.status || "No details"
                                         font.family: "Courier New"
                                         font.pixelSize: 12
                                         color: textColor
