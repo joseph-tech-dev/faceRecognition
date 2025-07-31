@@ -1,16 +1,17 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QIcon>
 
 #include "Auth/AuthManager.h"
 #include "OSINT/OsintManager.h"
-#include "FaceScan/FaceScanManager.h"
+//#include "FaceScan/FaceScanManager.h"
 
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-
+    app.setWindowIcon(QIcon(":assets/icons/zephix.ico"));  // Note the ':' for Qt Resource System
     QQmlApplicationEngine engine;
 
     // Initialize and expose AuthManager
@@ -22,8 +23,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("OsintManager", &osintManager);
 
     //Face Scanning
-    FaceScanManager faceScanManager;
-    engine.rootContext()->setContextProperty("faceScanManager", &faceScanManager);
+    //FaceScanManager faceScanManager;
+    //engine.rootContext()->setContextProperty("faceScanManager", &faceScanManager);
 
     // Handle QML loading failure
     QObject::connect(

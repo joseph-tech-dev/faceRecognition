@@ -17,7 +17,7 @@ qt_add_executable(appFaceIntelSystem
     main.cpp
     Auth/AuthManager.cpp
     OSINT/OsintManager.cpp
-    FaceScan/FaceScanManager.cpp
+    #FaceScan/FaceScanManager.cpp
     resources/qml.qrc
 )
 target_include_directories(appFaceIntelSystem PRIVATE Auth)

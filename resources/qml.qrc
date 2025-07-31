@@ -9,6 +9,10 @@
         <file>../assets/icons/Search.png</file>
         <file>../assets/icons/user.png</file>
         <file>../assets/icons/lock.png</file>
+        <file>../assets/icons/zephix_16.png</file>
+        <file>../assets/icons/zephix_32.png</file>
+        <file>../assets/icons/zephix_64.png</file>
+        <file>../assets/icons/zephix.ico</file>
         <file>../assets/Face_placeholder.jpeg</file>
     </qresource>
 </RCC>
