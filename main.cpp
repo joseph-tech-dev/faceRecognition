@@ -4,6 +4,8 @@
 
 #include "Auth/AuthManager.h"
 #include "OSINT/OsintManager.h"
+#include "FaceScan/FaceScanManager.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +20,10 @@ int main(int argc, char *argv[])
     // Initialize and expose OsintManager
     OsintManager osintManager;
     engine.rootContext()->setContextProperty("OsintManager", &osintManager);
+
+    //Face Scanning
+    FaceScanManager faceScanManager;
+    engine.rootContext()->setContextProperty("faceScanManager", &faceScanManager);
 
     // Handle QML loading failure
     QObject::connect(
