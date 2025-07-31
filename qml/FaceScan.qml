@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
+import QtQuick.Dialogs 6.2  // ✅ Correct for Qt 6+
 
 Item {
     id: root
@@ -18,6 +19,11 @@ Item {
     property real borderWidth: 0.5
     property real globalMargin: 15  // Added global margin constant
     property real panelSpacing: 20  // Added spacing between panels
+
+    //property for image replace
+    property url selectedImagePath: "qrc:/assets/Face_placeholder.jpeg"
+
+
 
     // Background
     Rectangle {
@@ -269,6 +275,34 @@ Item {
                     }
                 }
             }
+            FileDialog {
+                id: fileDialog
+                title: "Select Face Image"
+                nameFilters: ["*.jpg", "*.jpeg", "*.png"]
+                currentFolder: StandardPaths.pictures
+                onAccepted: {
+                    if (fileDialog.selectedFile !== "") {
+                        selectedImagePath = fileDialog.selectedFile
+                        console.log("Image set to:", selectedImagePath)
+
+                        var localPath = selectedImagePath.toString().replace("file://", "")
+                        console.log("Passing to C++:", localPath)
+
+                        faceScanManager.scanImage(localPath)
+                    } else {
+                        console.log("No file selected.")
+                    }
+                }
+                onRejected: {
+                    console.log("Dialog cancelled")
+                }
+            }
+
+
+
+
+
+
 
             // Scan Area with padding
             Rectangle {
@@ -337,10 +371,11 @@ Item {
                         // Placeholder image
                         Image {
                             anchors.fill: parent
-                            anchors.margins: 15  // Added margin around image
-                            source: "qrc:/assets/Face_placeholder.jpeg"
+                            anchors.margins: 15
+                            source: selectedImagePath
                             fillMode: Image.PreserveAspectFit
                         }
+
                     }
 
                     // Scan button with padding
@@ -392,7 +427,10 @@ Item {
                                 scanButton.color = "transparent"
                                 scanButton.border.width = 2
                             }
-                            onClicked: console.log("Scan button clicked")
+                            onClicked: {
+                                fileDialog.open()
+                            }
+
                         }
                     }
                 }
