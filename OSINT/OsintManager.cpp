@@ -1,4 +1,3 @@
-// OsintManager.cpp
 #include "OsintManager.h"
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -9,67 +8,75 @@
 #include <QCoreApplication>
 #include <QRegularExpression>
 #include <QDir>
-
+#include <QFile>
 
 OsintManager::OsintManager(QObject* parent) : QObject(parent) {
     connect(&m_process, &QProcess::readyReadStandardOutput, this, &OsintManager::handleProcessOutput);
+    connect(&m_process, &QProcess::readyReadStandardError, this, &OsintManager::handleProcessErrorOutput);
+    connect(&m_process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            this, &OsintManager::handleProcessFinished);
     connect(&m_process, &QProcess::errorOccurred, this, &OsintManager::handleProcessError);
 }
 
 void OsintManager::search(const QString& query) {
     m_results.clear();
     emit osintResultsChanged();
+    emit osintStarted();
 
     QString program = "python3";
 
-    // Step up from build folder to reach source
+    // Navigate to the project root
     QDir appDir(QCoreApplication::applicationDirPath());
-    QString sourceRoot = appDir.absoluteFilePath("../../"); // go two levels up
-    QString scriptPath = QDir::cleanPath(sourceRoot + "/Python/Osint_runner.py");
-
-    if (!QFile::exists(scriptPath)) {
-        qWarning() << "OSINT script not found at:" << scriptPath;
-        return;
-    }
+    QString sourceRoot = appDir.absoluteFilePath("../../");
 
     QStringList args;
+    args << "-m" << "Python.osint_runner.main";  // use module-style execution
+
     static const QRegularExpression nonDigitRegex("\\D");
-
     if (query.contains("@"))
-        args << scriptPath << "--email" << query;
+        args << "--email" << query;
     else if (query.startsWith("+") || QString(query).remove(nonDigitRegex).length() >= 10)
-        args << scriptPath << "--phone" << query;
+        args << "--phone" << query;
     else
-        args << scriptPath << "--username" << query;
+        args << "--username" << query;
 
-   // qDebug() << "Running:" << program << args;
+    m_outputBuffer.clear();
 
+    // Set working directory so module path is correct
+    m_process.setWorkingDirectory(sourceRoot);
     m_process.start(program, args);
 }
 
-
-
-
 void OsintManager::handleProcessOutput() {
     QByteArray output = m_process.readAllStandardOutput();
-    //qDebug() << "Raw output:" << output;
+    m_outputBuffer.append(output); // accumulate output
+}
+
+void OsintManager::handleProcessErrorOutput() {
+    QByteArray errorOutput = m_process.readAllStandardError();
+    qWarning() << "Python script stderr:" << QString::fromUtf8(errorOutput);
+}
+
+void OsintManager::handleProcessFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+    Q_UNUSED(exitCode)
+    Q_UNUSED(exitStatus)
 
     QJsonParseError error;
-    QJsonDocument doc = QJsonDocument::fromJson(output, &error);
+    QJsonDocument doc = QJsonDocument::fromJson(m_outputBuffer, &error);
 
     if (error.error != QJsonParseError::NoError) {
-        qWarning() << "Failed to parse JSON output:" << error.errorString();
+        emit osintFailed("Failed to parse OSINT results: " + error.errorString());
         return;
     }
 
     if (!doc.isObject()) {
-        qWarning() << "Expected a JSON object from OSINT runner";
+        emit osintFailed("Unexpected response format from OSINT runner.");
         return;
     }
 
     QJsonObject root = doc.object();
     if (!root.contains("results") || !root["results"].isArray()) {
-        qWarning() << "Missing or invalid 'results' array in output";
+        emit osintFailed("Missing 'results' array in OSINT output.");
         return;
     }
 
@@ -81,10 +88,12 @@ void OsintManager::handleProcessOutput() {
     }
 
     emit osintResultsChanged();
+    emit osintFinished();
 }
 
-void OsintManager::handleProcessError() {
-    qWarning() << "OSINT subprocess error:" << m_process.errorString();
+void OsintManager::handleProcessError(QProcess::ProcessError error) {
+    qWarning() << "OSINT subprocess error:" << error;
+    emit osintFailed("Process error occurred.");
 }
 
 QVariantList OsintManager::osintResults() const {

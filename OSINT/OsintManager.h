@@ -18,12 +18,19 @@ public:
 
 signals:
     void osintResultsChanged();
+    void osintStarted();
+    void osintFinished();
+    void osintFailed(const QString& message);
 
 private slots:
     void handleProcessOutput();
-    void handleProcessError();
+    void handleProcessErrorOutput();
+    void handleProcessFinished(int exitCode, QProcess::ExitStatus status);
+    void handleProcessError(QProcess::ProcessError error);
 
 private:
     QProcess m_process;
     QVariantList m_results;
+    QByteArray m_outputBuffer;
+
 };

@@ -205,46 +205,85 @@ Item {
                             model: OsintManager.osintResults
                             delegate: Rectangle {
                                 width: parent.width
-                                height: 100
+                                height: 110
                                 radius: 6
                                 color: panelColor
                                 border.color: neonBlue
                                 border.width: borderWidth
 
-                                Column {
+                                Item {
                                     anchors.fill: parent
                                     anchors.margins: 10
-                                    spacing: 6
-                                    Text {
-                                        text: "[" + (modelData.platform || "Unknown") + "] " + (modelData.url || "")
-                                        font.family: "Courier New"
-                                        font.pixelSize: 14
-                                        color: neonBlue
-                                        wrapMode: Text.WrapAnywhere
+
+                                    // Text content (left side)
+                                    Column {
+                                        anchors.left: parent.left
+                                        anchors.right: openButton.left
+                                        anchors.top: parent.top
+                                        anchors.bottom: parent.bottom
+                                        spacing: 6
+
+                                        Text {
+                                            text: "[" + (modelData.platform || "Unknown") + "] " + (modelData.url || "")
+                                            font.family: "Courier New"
+                                            font.pixelSize: 14
+                                            color: neonBlue
+                                            wrapMode: Text.WrapAnywhere
+                                        }
+
+                                        Text {
+                                            text: modelData.data || modelData.status || "No details"
+                                            font.family: "Courier New"
+                                            font.pixelSize: 12
+                                            color: textColor
+                                            wrapMode: Text.Wrap
+                                        }
+
+                                        Text {
+                                            text: modelData.timestamp || ""
+                                            font.family: "Courier New"
+                                            font.pixelSize: 10
+                                            color: Qt.lighter(textColor, 1.5)
+                                        }
                                     }
 
-                                    Text {
-                                        text: modelData.data || modelData.status || "No details"
-                                        font.family: "Courier New"
-                                        font.pixelSize: 12
-                                        color: textColor
+                                    // Open Button (right side)
+                                    Rectangle {
+                                        id: openButton
+                                        width: 60
+                                        height: 26
+                                        radius: 4
+                                        color: Qt.darker(panelColor, 1.3)
+                                        border.color: neonBlue
+                                        border.width: 1
+                                        anchors.top: parent.top
+                                        anchors.right: parent.right
+                                        anchors.topMargin: 5
+                                        anchors.rightMargin: 5
+
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: "Open"
+                                            color: neonBlue
+                                            font.family: "Courier New"
+                                            font.pixelSize: 12
+                                        }
+
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                if (modelData.url) {
+                                                    OsintManager.openUrl(modelData.url)
+                                                }
+                                            }
+                                            onEntered: parent.color = Qt.rgba(0, 1, 1, 0.15)
+                                            onExited: parent.color = Qt.darker(neonBlue, 1.2)
+                                        }
                                     }
-
-                                    Text {
-                                        text: modelData.timestamp || ""
-                                        font.family: "Courier New"
-                                        font.pixelSize: 10
-                                        color: Qt.lighter(textColor, 1.5)
-                                    }
-
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: OsintManager.openUrl(model.url)
-                                    cursorShape: Qt.PointingHandCursor
                                 }
                             }
+
                         }
                     }
                 }
