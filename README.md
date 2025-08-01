@@ -1,6 +1,6 @@
 # FACEINTEL Recognition System
 
-![FACEINTEL Logo Placeholder](assets/icons/zephix_128.png.png)
+![FACEINTEL Logo Placeholder](assets/icons/zephix_64.png)
 
 ## 🧠 Overview
 
