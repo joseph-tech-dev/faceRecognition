@@ -1,113 +1,146 @@
-
 # FACEINTEL Recognition System
 
-## Overview
+![FACEINTEL Logo Placeholder](assets/icons/zephix_128.png.png)
 
-**FACEINTEL** is an advanced facial recognition system that matches uploaded images against both local and online databases. This dashboard provides a comprehensive interface for monitoring system performance, reviewing matches, and managing recognition operations.
+## 🧠 Overview
 
-## Features
+**FACEINTEL** is an advanced, modular facial recognition and OSINT intelligence platform. Built with C++, QML, Python, and integrated with local and online databases, it enables real-time face matching, identity lookup, and forensic intelligence analysis.
 
-- **Dual Database Matching**: Searches both local and online databases  
-- **Real-time Statistics**: Tracks matches, accuracy, and system status  
-- **Recent Matches Display**: Shows detailed results of recent recognitions  
-- **Responsive Design**: Adapts to desktop, tablet, and mobile screens  
-- **Futuristic UI**: Neon-themed interface with glowing elements  
+## 🚀 Key Features
 
-## System Requirements
+* 🔍 **Face Recognition Engine (SFace)**
 
-- Qt 5.15 or later  
-- QML-compatible platform  
-- Minimum screen resolution: 800×600  
+  * Real-time matching from camera/image uploads
+  * Confidence score visualization
+  * Local database + cloud matching integration
 
-## Installation
+* 🌐 **OSINT Lookup**
 
-### Clone the repository:
+  * Email, phone, or username trace
+  * Python-powered data scraping and enrichment
+  * Seamless UI integration with live result viewing
+
+* 📊 **Futuristic Dashboard**
+
+  * Neon grid visuals, holographic UI
+  * CPU/GPU/memory activity monitor
+  * Modular panels for matches, alerts, filters, analytics
+
+* 🔐 **Authentication System**
+
+  * Login page with credential verification
+  * Secure session handling (QML & C++)
+
+* 📱 **Responsive Design**
+
+  * Desktop-first UI with adaptive layout support
+  * Grid-based visuals and animated interactions
+
+## 🧱 Project Structure
+
+```
+FaceIntelSystem/
+├── assets/              # Icons, system logos, placeholder images
+├── qml/                 # QML interface files
+│   ├── Dashboard.qml
+│   ├── FaceScan.qml
+│   ├── OSINTLookup.qml
+│   ├── LoginPage.qml
+├── OSINT/               # Python runner integration and C++ manager
+│   ├── OsintManager.cpp/.h
+│   └── Python/osint_runner/
+├── Auth/                # Authentication logic (C++/QML bindings)
+├── include/             # C++ headers
+├── src/                 # Face recognition logic (SFace + OpenCV)
+├── db/                  # MySQL/SQLite scripts
+├── main.cpp
+├── Main.qml
+├── CMakeLists.txt
+└── README.md
+```
+
+## 💻 System Requirements
+
+* **Qt 5.15+ or Qt 6+** with QtQuick, Controls 2, and QML modules
+* **OpenCV 4.5+** with DNN module
+* **Python 3.9+** with required packages for OSINT
+* **CMake 3.16+**
+* **MySQL/SQLite** for local data persistence
+
+## ⚙️ Build & Run
+
 ```bash
 git clone https://github.com/joseph-tech-dev/faceRecognition.git
+cd FaceIntelSystem
+mkdir build && cd build
+cmake ..
+make
+./FaceIntelSystem
 ```
 
-### Navigate to the project directory:
+Or use `qmlscene` for UI development:
+
 ```bash
-cd FACEINTEL
+qmlscene qml/Main.qml
 ```
 
-### Build and run using qmlscene:
-```bash
-qmlscene main.qml
-```
+## 🖼️ UI Preview
 
-## Usage
+> 💡 Place screenshots in the `assets/` directory and update the links accordingly.
 
-### Navigation
+| Page             | Screenshot                |
+| ---------------- | ------------------------- |
+| **Login Page**   | ![](assets/Login.png)     |
+| **Dashboard**    | ![](assets/Dashboard.png) |
+| **OSINT Lookup** | ![](assets/Osint.png)     |
 
-- **Home**: Returns to the main dashboard view  
-- **Scan**: Access the image upload and recognition interface  
-- **Database**: Manage local facial database entries  
-- **Settings**: Configure system parameters  
+## 🧭 Navigation
 
-### Dashboard Components
+* **LoginPage.qml** → Secure access
+* **Dashboard.qml** → Main control hub
+* **FaceScan.qml** → Upload & detect
+* **OSINTLookup.qml** → Identity tracing
 
-- **Match Statistics Panel (Top-left)**  
-  - Navigation buttons to key system sections  
+## 🛠️ Theme Customization
 
-- **Database Status Panel (Top-right)**  
-  - Local database health  
-  - Online API connection status  
+Change colors in `Main.qml` or theme constants:
 
-- **Recent Matches Panel (Bottom)**  
-  - Detailed results of recent recognitions  
-  - Confidence scores and data sources  
-
-- **System Activity Panel (Desktop only)**  
-  - Performance metrics and charts  
-
-## Customization
-
-### Theme Colors
-
-Modify these properties in `main.qml`:
 ```qml
-property color neonBlue: "#00f2ff"  // Primary accent color  
-property color neonGreen: "#00ffaa" // Success indicators  
-property color bgColor: "#0a0f1c"   // Background color  
-property color panelColor: "#111a24" // Panel backgrounds  
+property color neonBlue: "#00f2ff"
+property color bgColor:  "#0a0f1c"
+property color panelColor: "#111a24"
 ```
 
-### Responsive Breakpoints
+## 📡 Data Sources
 
-Adjust screen size thresholds:
-```qml
-property bool isMobile: width < 900  
-property bool isTablet: width >= 900 && width < 1200  
-property bool isDesktop: width >= 1200  
-```
+* **Local Database (MySQL/SQLite)**: Face vectors, users, match history
+* **Online APIs**: PimEye, Sherlock-style traces, metadata fetchers
+* **Filesystem**: Drag-and-drop uploads, logs, and snapshots
 
-## Data Sources
+## 🧪 Troubleshooting
 
-The system uses:
+| Issue                    | Solution                                    |
+| ------------------------ | ------------------------------------------- |
+| Blank UI panels          | Check QML module paths and bindings         |
+| Python errors in OSINT   | Validate script path, fix relative imports  |
+| Unresponsive Open button | Ensure valid `url` field in OSINT data      |
+| Build fails on Linux     | Run `chmod +x` on shell scripts / `main.py` |
 
-- **Local Database**: SQLite database of known faces  
-- **Online API**: Cloud-based recognition service (configurable)  
+## 📜 License
 
-## Troubleshooting
+Licensed under the **MIT License** — see `LICENSE` file for details.
 
-- **Blank panels**: Ensure database connections are properly configured  
-- **Layout issues**: Verify Qt Quick Controls 2 are installed  
-- **Performance**: Reduce animation complexity on low-end devices  
+## 🤝 Contributing
 
-## License
+Pull requests are welcome. Submit issues or feature requests on GitHub.
+If you're contributing code, ensure your patches match the coding style and pass linting.
 
-This project is licensed under the **MIT License**.
+---
 
-## Screenshots
+## 📬 Contact
 
-- ![Desktop](https://screenshots/desktop.png)  
-- ![Mobile](https://screenshots/mobile.png)  
+For inquiries or support: [predatormj.v3@gmail.com](mailto:predatormj.v3@gmail.com)
 
-## Contributing
+---
 
-Pull requests are welcome. For major changes, please open an issue first to discuss proposed changes.
-
-## Contact
-
-For support or inquiries: [predatormj.v3@gmail.com]
+> © 2025 FACEINTEL SYSTEM | Built with ❤️ in Qt, C++, Python, and AI
