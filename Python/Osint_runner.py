@@ -22,11 +22,82 @@ except ImportError as e:
 
 # ---------------------- CONFIG ----------------------
 USERNAME_PLATFORMS = {
+    # Mainstream Social Media
     "Twitter": "https://twitter.com/{}",
     "Facebook": "https://www.facebook.com/{}",
     "Instagram": "https://www.instagram.com/{}/",
     "LinkedIn": "https://www.linkedin.com/in/{}",
-    "GitHub": "https://github.com/{}"
+    "TikTok": "https://www.tiktok.com/@{}",
+    "Reddit": "https://www.reddit.com/user/{}",
+    "Pinterest": "https://www.pinterest.com/{}/",
+    "Tumblr": "https://{}.tumblr.com/",
+    "VK": "https://vk.com/{}",
+    "Weibo": "https://weibo.com/{}",
+    
+    # Developer & Tech
+    "GitHub": "https://github.com/{}",
+    "GitLab": "https://gitlab.com/{}",
+    "Bitbucket": "https://bitbucket.org/{}/",
+    "StackOverflow": "https://stackoverflow.com/users/{}",
+    "Keybase": "https://keybase.io/{}",
+    "HackerRank": "https://www.hackerrank.com/{}",
+    "LeetCode": "https://leetcode.com/{}/",
+    "Dev.to": "https://dev.to/{}",
+    "CodePen": "https://codepen.io/{}",
+    "CodeSandbox": "https://codesandbox.io/u/{}",
+    
+    # Gaming & Streaming
+    "Twitch": "https://www.twitch.tv/{}",
+    "Steam": "https://steamcommunity.com/id/{}",
+    "Xbox Live": "https://account.xbox.com/profile?gamertag={}",
+    "PlayStation Network": "https://psnprofiles.com/{}",
+    "Roblox": "https://www.roblox.com/user.aspx?username={}",
+    "Epic Games": "https://www.epicgames.com/account/personal?productName=epicgames&username={}",
+    "Battle.net": "https://blizzard.com/invite/{}",
+    
+    # Forums & Communities
+    "Quora": "https://www.quora.com/profile/{}",
+    "Medium": "https://medium.com/@{}",
+    "WordPress": "https://{}.wordpress.com/",
+    "Blogger": "https://{}.blogspot.com/",
+    "Gaia Online": "https://www.gaiaonline.com/profiles/{}/",
+    "Flickr": "https://www.flickr.com/people/{}/",
+    
+    # Professional Networks
+    "Behance": "https://www.behance.net/{}",
+    "Dribbble": "https://dribbble.com/{}",
+    "AngelList": "https://angel.co/u/{}",
+    "Crunchbase": "https://www.crunchbase.com/person/{}",
+    
+    # Multimedia & Content
+    "YouTube": "https://www.youtube.com/{}",
+    "Vimeo": "https://vimeo.com/{}",
+    "SoundCloud": "https://soundcloud.com/{}",
+    "Spotify": "https://open.spotify.com/user/{}",
+    "Imgur": "https://imgur.com/user/{}",
+    "Bandcamp": "https://bandcamp.com/{}",
+    
+    # Other Platforms
+    "Goodreads": "https://www.goodreads.com/{}",
+    "Letterboxd": "https://letterboxd.com/{}/",
+    "Fiverr": "https://www.fiverr.com/{}",
+    "Etsy": "https://www.etsy.com/shop/{}",
+    "Slideshare": "https://slideshare.net/{}",
+    "Wikipedia": "https://en.wikipedia.org/wiki/User:{}",
+    "Patreon": "https://www.patreon.com/{}",
+    "Kickstarter": "https://www.kickstarter.com/profile/{}",
+    "Duolingo": "https://www.duolingo.com/profile/{}",
+    "Replit": "https://replit.com/@{}",
+    
+    # Paste & Code Sharing
+    "Pastebin": "https://pastebin.com/u/{}",
+    "Ghostbin": "https://ghostbin.com/user/{}",
+    "Codiga": "https://app.codiga.io/profile/{}",
+    
+    # Security & OSINT Tools
+    "Have I Been Pwned": "https://haveibeenpwned.com/unifiedsearch/{}",
+    "Namechk": "https://namechk.com/results/?q={}",
+    "Sherlock Project": "https://github.com/sherlock-project/sherlock/wiki/Sherlock-Modules"
 }
 
 EMAIL_REGEX = re.compile(r"[^@]+@[^@]+\.[^@]+")
