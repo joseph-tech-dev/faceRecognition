@@ -5,14 +5,18 @@
 
 #include "Auth/AuthManager.h"
 #include "OSINT/OsintManager.h"
+#include "SystemMonitor/SystemMonitor.h"
 //#include "FaceScan/FaceScanManager.h"
 
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    app.setWindowIcon(QIcon(":assets/icons/zephix.ico"));  // Note the ':' for Qt Resource System
+    app.setWindowIcon(QIcon(":assets/icons/zephix_32.png"));  // Note the ':' for Qt Resource System
     QQmlApplicationEngine engine;
+
+    // Register SystemMonitor as a QML type
+    qmlRegisterType<SystemMonitor>("SystemMonitor", 1, 0, "SystemMonitor");
 
     // Initialize and expose AuthManager
     AuthManager authManager;

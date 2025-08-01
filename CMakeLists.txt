@@ -17,6 +17,7 @@ qt_add_executable(appFaceIntelSystem
     main.cpp
     Auth/AuthManager.cpp
     OSINT/OsintManager.cpp
+    SystemMonitor/SystemMonitor.cpp
     #FaceScan/FaceScanManager.cpp
     resources/qml.qrc
 )

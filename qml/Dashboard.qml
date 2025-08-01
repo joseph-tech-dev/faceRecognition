@@ -1,13 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-
+import SystemMonitor 1.0
 
 Item {
     id: appWindow
     width: parent ? parent.width : 1280
     height: parent ? parent.height : 720
-
 
     // ==================== PROPERTIES ====================
     // Theme Properties
@@ -32,37 +31,20 @@ Item {
         {name: "Alex Wong", id: "C39012", confidence: 0.921, source: "local", image: "qrc:/sample_faces/face3.jpg"}
     ]
 
-    // System Monitor Properties
-    property var systemMonitor: ({
-        cpuUsage: 45,
-        memoryUsage: 68,
-        gpuUsage: 32,
-        timeRange: "5m",
-        refresh: function() {
-            //console.log("Refreshing data");
-            // Generate some random data for demo purposes
-            var newCpu = Math.min(100, Math.max(0, systemMonitor.cpuUsage + (Math.random() * 6 - 3)));
-            var newMem = Math.min(100, Math.max(0, systemMonitor.memoryUsage + (Math.random() * 4 - 2)));
-            var newGpu = Math.min(100, Math.max(0, systemMonitor.gpuUsage + (Math.random() * 8 - 4)));
-
-            systemMonitor.cpuUsage = Math.round(newCpu);
-            systemMonitor.memoryUsage = Math.round(newMem);
-            systemMonitor.gpuUsage = Math.round(newGpu);
-
-            // Update history arrays
-            systemMonitor.cpuHistory.shift();
-            systemMonitor.cpuHistory.push(systemMonitor.cpuUsage);
-            systemMonitor.memoryHistory.shift();
-            systemMonitor.memoryHistory.push(systemMonitor.memoryUsage);
-            systemMonitor.gpuHistory.shift();
-            systemMonitor.gpuHistory.push(systemMonitor.gpuUsage);
-
+    // Real System Monitor
+    SystemMonitor {
+        id: realSystemMonitor
+        onDataUpdated: {
             activityChart.requestPaint();
-        },
-        cpuHistory: [45, 48, 52, 50, 47, 45, 43, 40, 42, 45],
-        memoryHistory: [68, 67, 66, 67, 68, 69, 68, 67, 68, 68],
-        gpuHistory: [32, 30, 28, 30, 32, 35, 33, 32, 31, 32]
-    })
+        }
+        Component.onCompleted: {
+            if (typeof dataUpdated === 'undefined') {
+                console.error("SystemMonitor.dataUpdated signal is not available");
+                // Fallback to timer-based updates if signal missing
+                updateTimer.start();
+        }
+    }
+    }
 
     // Layout Properties
     property bool isMobile: width < 900
@@ -90,7 +72,7 @@ Item {
         columnSpacing: elementSpacing
         rowSpacing: elementSpacing
 
-        // Navigation Panel
+        // Navigation Panel (unchanged)
         DashboardPanel {
             id: statsPanel
             title: "NAVIGATION"
@@ -111,7 +93,6 @@ Item {
                         {icon: "⚙️", text: "OSINT", page: "OSINTLookup"},
                         {icon: "🗄️", text: "Database", page: "Database"},
                         {icon: "⚙️", text: "Settings", page: "Settings"}
-
                     ]
 
                     NavigationButton {
@@ -148,7 +129,7 @@ Item {
             }
         }
 
-        // Database Status Panel
+        // Database Status Panel (unchanged)
         DashboardPanel {
             id: databasePanel
             title: "DATABASE STATUS"
@@ -179,7 +160,7 @@ Item {
         }
 
         // ==================== BOTTOM ROW ====================
-        // System Activity Panel (left side)
+        // System Activity Panel (left side) - UPDATED
         DashboardPanel {
             id: activityPanel
             title: "SYSTEM ACTIVITY"
@@ -192,36 +173,41 @@ Item {
                 anchors.margins: panelPadding
                 spacing: elementSpacing
 
-                // Stats Header Row
+                // Stats Header Row - UPDATED
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: elementSpacing * 2
 
                     StatisticTile {
                         title: "CPU Usage"
-                        value: systemMonitor.cpuUsage + "%"
-                        statcolor: systemMonitor.cpuUsage > 80 ? "#FF5555" : neonGreen
+                        value: realSystemMonitor.cpuUsage + "%"
+                        statcolor: realSystemMonitor.cpuUsage > 80 ? "#FF5555" : neonGreen
                         Layout.preferredWidth: 120
                     }
 
                     StatisticTile {
                         title: "Memory"
-                        value: systemMonitor.memoryUsage + "%"
-                        statcolor: systemMonitor.memoryUsage > 85 ? "#FF5555" : neonBlue
+                        value: realSystemMonitor.memoryUsage + "%"
+                        statcolor: realSystemMonitor.memoryUsage > 85 ? "#FF5555" : neonBlue
                         Layout.preferredWidth: 120
                     }
 
                     StatisticTile {
                         title: "GPU Load"
-                        value: systemMonitor.gpuUsage + "%"
-                        statcolor: systemMonitor.gpuUsage > 75 ? "#FF5555" : "#AA00FF"
+                        value: realSystemMonitor.gpuUsage + "%"
+                        statcolor: realSystemMonitor.gpuUsage > 75 ? "#FF5555" : "#AA00FF"
                         Layout.preferredWidth: 120
                     }
 
-                    Item { Layout.fillWidth: true } // Spacer
+                    StatisticTile {
+                        title: "Temperature"
+                        value: realSystemMonitor.temperature + "°C"
+                        statcolor: realSystemMonitor.temperature > 70 ? "#FF5555" : "#FF5500"
+                        Layout.preferredWidth: 120
+                    }
                 }
 
-                // Main Chart Area
+                // Main Chart Area - UPDATED
                 Rectangle {
                     id: chartContainer
                     Layout.fillWidth: true
@@ -236,12 +222,19 @@ Item {
                         anchors.fill: parent
                         anchors.margins: 10
 
-                        property var timePoints: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] // Last 10 seconds
-                        property var cpuData: systemMonitor.cpuHistory
-                        property var memoryData: systemMonitor.memoryHistory
-                        property var gpuData: systemMonitor.gpuHistory
+                       // property var cpuData: realSystemMonitor.cpuHistory()
+                       // property var memoryData: realSystemMonitor.memoryHistory()
+                       // property var gpuData: realSystemMonitor.gpuHistory()
+                       // property var tempData: realSystemMonitor.temperatureHistory()
 
                         onPaint: {
+                            var cpuData = realSystemMonitor.cpuHistory()
+                            var memoryData = realSystemMonitor.memoryHistory()
+                            var gpuData = realSystemMonitor.gpuHistory()
+                            var tempData = realSystemMonitor.temperatureHistory()
+
+
+
                             var ctx = getContext("2d")
                             ctx.reset()
 
@@ -267,6 +260,7 @@ Item {
                             drawLine(ctx, cpuData, neonGreen)
                             drawLine(ctx, memoryData, neonBlue)
                             drawLine(ctx, gpuData, "#AA00FF")
+                            drawLine(ctx, tempData, "#FF5500")
 
                             // Draw legend
                             drawLegend(ctx)
@@ -279,7 +273,7 @@ Item {
                             ctx.lineWidth = 2
                             ctx.beginPath()
 
-                            var xStep = width / (timePoints.length - 1)
+                            var xStep = width / (data.length - 1)
                             var firstY = height - (data[0]/100 * height)
                             ctx.moveTo(0, firstY)
 
@@ -296,7 +290,8 @@ Item {
                             var legendItems = [
                                 { text: "CPU", color: neonGreen },
                                 { text: "Memory", color: neonBlue },
-                                { text: "GPU", color: "#AA00FF" }
+                                { text: "GPU", color: "#AA00FF" },
+                                { text: "Temp", color: "#FF5500" }
                             ]
 
                             var boxSize = 15
@@ -321,7 +316,7 @@ Item {
                     }
                 }
 
-                // Timeline controls
+                // Timeline controls - UPDATED
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: elementSpacing
@@ -347,7 +342,17 @@ Item {
                                 verticalAlignment: Text.AlignVCenter
                                 font: parent.font
                             }
-                            onClicked: systemMonitor.timeRange = modelData
+                            onClicked: {
+                                // Adjust history size based on selected time range
+                                var historySize = 60; // Default to 1 minute
+                                switch(modelData) {
+                                    case "5m": historySize = 300; break;
+                                    case "15m": historySize = 900; break;
+                                    case "30m": historySize = 1800; break;
+                                    case "1h": historySize = 3600; break;
+                                }
+                                realSystemMonitor.setHistorySize(historySize);
+                            }
                         }
                     }
 
@@ -371,23 +376,13 @@ Item {
                             verticalAlignment: Text.AlignVCenter
                             font: parent.font
                         }
-                        onClicked: systemMonitor.refresh()
+                        onClicked: realSystemMonitor.forceUpdate()
                     }
-                }
-            }
-
-            // Timer to update chart
-            Timer {
-                interval: 1000
-                running: true
-                repeat: true
-                onTriggered: {
-                    systemMonitor.refresh();
                 }
             }
         }
 
-        // Recent Matches Panel (right side)
+        // Recent Matches Panel (right side) - unchanged
         DashboardPanel {
             id: matchesPanel
             title: "RECENT MATCHES"
@@ -410,6 +405,7 @@ Item {
     }
 
     // ==================== COMPONENTS ====================
+    // (All component definitions remain unchanged from your original file)
     component DashboardPanel: Rectangle {
         property string title
         property alias contentItem: contentContainer.data
