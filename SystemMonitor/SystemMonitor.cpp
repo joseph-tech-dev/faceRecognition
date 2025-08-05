@@ -280,7 +280,7 @@ void SystemMonitor::updateLinuxStats() {
         qWarning() << "Failed to compute memory usage - MemTotal was 0 or missing.";
     }
 
-    QFile tempFile("/sys/class/thermal/thermal_zone0/temp");
+    QFile tempFile("/sys/class/thermal/thermal_zone5/temp");
     if (tempFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream stream(&tempFile);
         QString tempString = stream.readLine().trimmed();
