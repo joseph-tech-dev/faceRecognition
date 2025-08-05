@@ -21,7 +21,7 @@ Item {
     property real panelSpacing: 20  // Added spacing between panels
 
     //property for image replace
-    property url selectedImagePath: "qrc:/assets/Face_placeholder.jpeg"
+    property url selectedImagePath: "qrc:/assets/FacePlaceholder.jpg"
 
 
 

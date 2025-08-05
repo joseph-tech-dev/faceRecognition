@@ -280,6 +280,24 @@ void SystemMonitor::updateLinuxStats() {
         qWarning() << "Failed to compute memory usage - MemTotal was 0 or missing.";
     }
 
+    QFile tempFile("/sys/class/thermal/thermal_zone0/temp");
+    if (tempFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream stream(&tempFile);
+        QString tempString = stream.readLine().trimmed();
+        bool ok;
+        int milliDegrees = tempString.toInt(&ok);
+        if (ok) {
+            int degrees = milliDegrees / 1000;
+            //qDebug() << "CPU Temperature:" << degrees << "°C";
+            m_temperature = degrees;
+            emit temperatureChanged();
+        }
+        tempFile.close();
+    } else {
+        qWarning() << "Failed to open temperature file";
+    }
+
+
 
 }
 
