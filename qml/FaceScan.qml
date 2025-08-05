@@ -14,9 +14,9 @@ Item {
     property color neonBlue: "#00f2ff"
     property color neonBlueDark: "#006a71"
     property color bgColor: "#0a0f1c"
-    property color panelColor: "#111a24"
+    property color panelColor: "black"
     property color textColor: "#ffffff"
-    property real borderWidth: 0.5
+    property real borderWidth: 0.05
     property real globalMargin: 15  // Added global margin constant
     property real panelSpacing: 20  // Added spacing between panels
 
@@ -70,7 +70,7 @@ Item {
             id: header
             Layout.fillWidth: true
             height: root.height * 0.1
-            color: "transparent"
+            color: panelColor
             border.color: neonBlue
             border.width: borderWidth
             radius: 4
@@ -338,8 +338,8 @@ Item {
                         anchors.horizontalCenter: parent.horizontalCenter
                         color: "#111"
                         border.color: neonBlue
-                        border.width: 2
-                        radius: 8
+                        border.width: 0.05
+                        radius: 4
 
                         // Added margin around face frame
                         anchors.topMargin: root.height * 0.02
@@ -352,7 +352,7 @@ Item {
                             radius: parent.radius + 2
                             color: "transparent"
                             border.color: neonBlue
-                            border.width: 2
+                            border.width: 0.5
                             opacity: 0.7
 
                             SequentialAnimation on border.width {
@@ -386,7 +386,7 @@ Item {
                         anchors.horizontalCenter: parent.horizontalCenter
                         color: "transparent"
                         border.color: neonBlue
-                        border.width: 2
+                        border.width: 0.05
                         radius: height/2
 
                         // Added margin above button
@@ -397,8 +397,8 @@ Item {
                             anchors.fill: parent
                             anchors.margins: 2
                             color: "transparent"
-                            border.color: Qt.lighter(neonBlue, 1.5)
-                            border.width: 1
+                            border.color: Qt.lighter(neonBlue, 0.5)
+                            border.width: 0.5
                             radius: parent.radius - 2
                             opacity: 0.7
                         }
@@ -421,11 +421,11 @@ Item {
                             hoverEnabled: true
                             onEntered: {
                                 scanButton.color = Qt.rgba(0, 0.95, 1, 0.1)
-                                scanButton.border.width = 3
+                                scanButton.border.width = 1
                             }
                             onExited: {
                                 scanButton.color = "transparent"
-                                scanButton.border.width = 2
+                                scanButton.border.width = 0.5
                             }
                             onClicked: {
                                 fileDialog.open()

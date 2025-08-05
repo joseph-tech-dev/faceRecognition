@@ -2,6 +2,8 @@
 #include <QDebug>
 #include <QStorageInfo>
 #include <QSysInfo>
+#include <QRegularExpression>
+#include <QTextStream>
 
 SystemMonitor::SystemMonitor(QObject *parent) : QObject(parent) {
     setHistorySize(60); // default to 60 points (1 minute at 1s intervals)
@@ -159,6 +161,7 @@ void SystemMonitor::updateWindowsStats() {
 
 #ifdef Q_OS_LINUX
 void SystemMonitor::updateLinuxStats() {
+    //qDebug() << ">>> updateLinuxStats() called";
     // CPU Usage
     QFile file("/proc/stat");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -168,6 +171,7 @@ void SystemMonitor::updateLinuxStats() {
 
     QTextStream in(&file);
     QString line = in.readLine(); // First line is overall CPU stats
+    //qDebug()<< "CPU" << line;
     QStringList values = line.split(' ', Qt::SkipEmptyParts);  // <-- FIXED
 
     if (values.size() < 5) {
@@ -197,50 +201,89 @@ void SystemMonitor::updateLinuxStats() {
     file.close();
 
     // Memory Usage
-    file.setFileName("/proc/meminfo");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Failed to open /proc/meminfo";
+    QFile memFile("/proc/meminfo");
+    if (!memFile.open(QIODevice::ReadOnly)) {
+        qWarning() << "Cannot open /proc/meminfo:" << memFile.errorString();
         return;
     }
+    // Parses memory usage statistics from /proc/meminfo.
+    // This method avoids QTextStream (which may silently fail) by reading the file
+    // as raw bytes and manually extracting relevant fields.
+    //
+    // Fields extracted:
+    //   - MemTotal:        Total system memory (kB)
+    //   - MemFree:         Unused memory (kB)
+    //   - Buffers:         Temporary buffer storage (kB)
+    //   - Cached:          Page cache (kB)
+    //   - SReclaimable:    Reclaimable slab memory (kB)
+    //
+    // The parsed values are stored in a QMap for easy access.
+    // These values are then used to compute actual memory usage percentage
+    // according to: used = total - free - buffers - cached - SReclaimable
+    //
+    // This approach ensures compatibility and stability across Linux systems.
 
-    QTextStream memStream(&file);  // Important: reset stream for /proc/meminfo
-    qint64 memTotal = 0, memFree = 0, buffers = 0, cached = 0;
 
-    while (!memStream.atEnd()) {
-        line = memStream.readLine();
-        if (line.startsWith("MemTotal:")) {
-            memTotal = line.split(' ', Qt::SkipEmptyParts)[1].toLongLong();  // <-- FIXED
-        } else if (line.startsWith("MemFree:")) {
-            memFree = line.split(' ', Qt::SkipEmptyParts)[1].toLongLong();   // <-- FIXED
-        } else if (line.startsWith("Buffers:")) {
-            buffers = line.split(' ', Qt::SkipEmptyParts)[1].toLongLong();   // <-- FIXED
-        } else if (line.startsWith("Cached:")) {
-            cached = line.split(' ', Qt::SkipEmptyParts)[1].toLongLong();    // <-- FIXED
+    QByteArray content = memFile.readAll();
+    memFile.close();
+
+    //qDebug().noquote() << "Raw /proc/meminfo content:\n" << content;
+
+    QMap<QString, qint64> memValues;
+    QList<QByteArray> lines = content.split('\n');
+
+    for (const QByteArray &line : std::as_const(lines)) {
+        QList<QByteArray> parts = line.split(':');
+        if (parts.size() != 2)
+            continue;
+
+        QString key = QString(parts[0].trimmed());
+        QByteArray valuePart = parts[1].trimmed();
+
+        int numStart = -1;
+        for (int i = 0; i < valuePart.size(); ++i) {
+            if (valuePart[i] >= '0' && valuePart[i] <= '9') {
+                numStart = i;
+                break;
+            }
+        }
+
+        if (numStart != -1) {
+            QByteArray numberStr = valuePart.mid(numStart).split(' ').first();
+            bool ok = false;
+            qint64 value = numberStr.toLongLong(&ok);
+            if (ok && (key == "MemTotal" || key == "MemFree" || key == "Buffers" || key == "Cached" || key == "SReclaimable")) {
+                memValues[key] = value;
+            }
         }
     }
 
-    if (memTotal > 0) {
-        qint64 used = memTotal - memFree - buffers - cached;
-        m_memoryUsage = (used * 100) / memTotal;
+    // Show parsed results
+    //qDebug() << "Parsed /proc/meminfo values:";
+    for (auto it = memValues.begin(); it != memValues.end(); ++it) {
+        //qDebug() << it.key() << ":" << it.value();
+    }
+
+    // Compute memory usage
+    if (memValues.contains("MemTotal") && memValues["MemTotal"] > 0) {
+        qint64 total = memValues["MemTotal"];
+        qint64 used = total - memValues.value("MemFree", 0)
+                      - memValues.value("Buffers", 0)
+                      - memValues.value("Cached", 0)
+                      - memValues.value("SReclaimable", 0);
+
+        m_memoryUsage = qBound(0, (used * 100) / total, 100);
         emit memoryUsageChanged();
+
+       // qDebug() << "Memory Usage:" << m_memoryUsage << "%";
+    } else {
+        qWarning() << "Failed to compute memory usage - MemTotal was 0 or missing.";
     }
 
-    file.close();
 
-    // GPU Usage (placeholder)
-    m_gpuUsage = 0;
-    emit gpuUsageChanged();
-
-    // Temperature
-    file.setFileName("/sys/class/thermal/thermal_zone0/temp");
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream tempStream(&file);
-        line = tempStream.readLine();
-        m_temperature = line.toInt() / 1000; // Convert millidegrees to degrees
-        emit temperatureChanged();
-        file.close();
-    }
 }
+
+
 #endif
 void SystemMonitor::forceUpdate() {
     updateSystemStats();

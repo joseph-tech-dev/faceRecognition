@@ -47,8 +47,8 @@ Item {
 
     // ====================== GLOW BOX ======================
     Rectangle {
-        width: 420
-        height: 320
+       // width: 420
+       // height: 320
         radius: 25
         color: neonBlue
         opacity: 0.15
@@ -56,8 +56,8 @@ Item {
 
         SequentialAnimation on opacity {
             loops: Animation.Infinite
-            NumberAnimation { to: 0.25; duration: 2 }
-            NumberAnimation { to: 0.15; duration: 2 }
+            NumberAnimation { to: 0.25; duration: 9000 }
+            NumberAnimation { to: 0.15; duration: 9000 }
         }
     }
 
@@ -220,7 +220,7 @@ Item {
                     font.pixelSize: 18
                     font.family: "Courier New"
                     font.weight: Font.Bold
-                    //letterSpacing: 1
+
                 }
 
                 MouseArea {
@@ -253,7 +253,7 @@ Item {
                 id: errorLabel
                 text: ""
                 color: "red"
-                font.pixelSize: 14
+                font.pixelSize: 15
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignHCenter
             }
@@ -296,7 +296,7 @@ Item {
         }
 
         function onLoginFailed(reason) {
-            console.log("Login failed:", reason)
+            //console.log("Login failed:", reason)
             errorLabel.text = reason
             errorAnimation.start()
         }

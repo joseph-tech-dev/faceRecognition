@@ -163,7 +163,7 @@ Item {
         // System Activity Panel (left side) - UPDATED
         DashboardPanel {
             id: activityPanel
-            title: "SYSTEM ACTIVITY"
+           // title: "SYSTEM ACTIVITY"
             Layout.fillWidth: true
             Layout.fillHeight: true
             visible: !isMobile

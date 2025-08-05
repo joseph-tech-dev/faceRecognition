@@ -35,6 +35,7 @@ bool AuthManager::login(const QString &username, const QString &password) {
 
     if (query.next()) {
         QString storedHash = query.value(0).toString();
+        //qDebug() <<storedHash;
         QString inputHash = QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256).toHex();
 
         if (storedHash == inputHash) {
