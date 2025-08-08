@@ -88,12 +88,12 @@ qmlscene qml/Main.qml
 
 > 💡 Place screenshots in the `assets/` directory and update the links accordingly.
 
-| Page             | Screenshot                |
-| ---------------- | ------------------------- |
-| **Login Page**   | ![](assets/Login.png)     |
-| **Dashboard**    | ![](assets/Dashboard.png) |
-| **OSINT Lookup** | ![](assets/Osint.png)     |
-
+| Page             | Screenshot                    |
+| ---------------- | ------------------------------|
+| **Login Page**   | ![](assets/Login.png)         |
+| **Dashboard**    | ![](assets/Dashboard.png)     |
+| **OSINT Lookup** | ![](assets/Osint.png)         |
+| **Database**     | ![](Db-desing/Face-intel.png) |
 ## 🧭 Navigation
 
 * **LoginPage.qml** → Secure access

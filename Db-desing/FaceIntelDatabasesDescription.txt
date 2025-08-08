@@ -1,0 +1,173 @@
+============================================================
+FaceIntelSystem – Database Design Description
+============================================================
+
+Overview
+--------
+The FaceIntelSystem database is structured into five functional domains to
+support offline facial recognition, OSINT (Open-Source Intelligence) data
+collection, case management, and secure system operations. The design
+emphasizes traceability, auditability, modularity, and performance for
+investigative and intelligence use cases.
+
+------------------------------------------------------------
+1. User & Security Management
+------------------------------------------------------------
+Table: users
+Purpose:
+    Stores authentication credentials and basic account information for
+    system operators.
+Key Fields:
+    - id (PK) – unique user identifier
+    - username – unique account name
+    - password_hash – securely stored password hash
+Notes:
+    Referenced by other tables (e.g., face_scans, system_logs) to identify
+    the responsible operator.
+
+------------------------------------------------------------
+2. Identity & Person Records
+------------------------------------------------------------
+Table: persons
+Purpose:
+    Master table for individuals involved in investigations, either known
+    or discovered through scans and OSINT.
+Key Fields:
+    - person_id (PK)
+    - full_name, dob, gender
+    - national_id, notes
+    - created_at timestamp
+
+Table: aliases
+Purpose:
+    Tracks alternative names, nicknames, or IDs for a person.
+Key Fields:
+    - alias_id (PK)
+    - person_id (FK → persons.person_id)
+    - alias_name, source
+
+------------------------------------------------------------
+3. Facial Recognition Data
+------------------------------------------------------------
+Table: face_images
+Purpose:
+    Stores metadata for facial images captured or uploaded into the system.
+Key Fields:
+    - image_id (PK)
+    - person_id (FK → persons.person_id, nullable if unidentified)
+    - file_path, capture_source, captured_at
+
+Table: face_vectors
+Purpose:
+    Contains the extracted facial embeddings (numerical vectors) used for
+    similarity search.
+Key Fields:
+    - vector_id (PK)
+    - image_id (FK → face_images.image_id)
+    - embedding (BLOB), model_used, vector_hash
+
+Table: face_scans
+Purpose:
+    Logs every facial recognition attempt performed by the system.
+Key Fields:
+    - scan_id (PK)
+    - source_image_id (FK → face_images.image_id)
+    - scan_source (ENUM: local, online, both)
+    - matched (BOOLEAN)
+    - matched_person_id (FK → persons.person_id, nullable)
+    - confidence_score
+    - match_source (ENUM: local, online, none)
+    - matched_image_id (FK → face_images.image_id, nullable)
+    - scanned_at timestamp
+    - processed_by (FK → users.id)
+
+Table: face_matches
+Purpose:
+    Stores detailed match results for each scan.
+Key Fields:
+    - match_id (PK)
+    - source_image_id (FK → face_images.image_id)
+    - matched_image_id (FK → face_images.image_id)
+    - confidence_score
+    - match_date
+    - match_type (ENUM: local, online)
+
+------------------------------------------------------------
+4. OSINT (Open-Source Intelligence)
+------------------------------------------------------------
+Table: osint_sources
+Purpose:
+    Registry of online tools, APIs, or databases used for information
+    gathering.
+Key Fields:
+    - source_id (PK)
+    - name, type, url, description
+
+Table: osint_results
+Purpose:
+    Stores search results obtained from OSINT sources.
+Key Fields:
+    - result_id (PK)
+    - person_id (FK → persons.person_id)
+    - source_id (FK → osint_sources.source_id)
+    - url, title, snippet, status_code, retrieved_at
+
+------------------------------------------------------------
+5. Case Management
+------------------------------------------------------------
+Table: cases
+Purpose:
+    Represents investigation cases handled in the system.
+Key Fields:
+    - case_id (PK)
+    - case_title, description
+    - status (ENUM: open, closed)
+    - created_at, updated_at
+
+Table: case_persons
+Purpose:
+    Associates individuals (persons) with investigation cases.
+Key Fields:
+    - case_person_id (PK)
+    - case_id (FK → cases.case_id)
+    - person_id (FK → persons.person_id)
+    - role (e.g., suspect, witness, victim)
+
+Table: case_files
+Purpose:
+    Stores evidence files related to a case.
+Key Fields:
+    - file_id (PK)
+    - case_id (FK → cases.case_id)
+    - file_path, file_type, uploaded_at
+
+------------------------------------------------------------
+6. System Logging & Audit
+------------------------------------------------------------
+Table: system_logs
+Purpose:
+    Maintains a record of system events for operational monitoring and
+    auditing.
+Key Fields:
+    - log_id (PK)
+    - event_type, event_details
+    - created_at
+    - user_id (FK → users.id)
+
+------------------------------------------------------------
+Key Professional Features
+------------------------------------------------------------
+1. Auditability – Every scan, match, OSINT lookup, and case action is
+   time-stamped and user-attributed.
+2. Flexibility – Modular separation of concerns allows independent scaling
+   of facial recognition, OSINT, and case management functions.
+3. Data Integrity – Strict foreign keys and controlled ENUM values prevent
+   inconsistent data.
+4. Performance – Indexing on high-use fields (person_id, captured_at,
+   match_source) supports fast queries.
+5. Future-Proofing – Allows easy integration of new recognition models,
+   OSINT sources, and investigative workflows.
+
+============================================================
+End of Document
+============================================================

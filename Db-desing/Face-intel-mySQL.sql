@@ -1,0 +1,141 @@
+CREATE TABLE `users` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `username` varchar(255) UNIQUE NOT NULL,
+  `password_hash` varchar(255) NOT NULL
+);
+
+CREATE TABLE `persons` (
+  `person_id` int PRIMARY KEY AUTO_INCREMENT,
+  `full_name` varchar(255),
+  `dob` date,
+  `gender` varchar(50),
+  `national_id` varchar(100),
+  `notes` text,
+  `created_at` datetime DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE TABLE `aliases` (
+  `alias_id` int PRIMARY KEY AUTO_INCREMENT,
+  `person_id` int,
+  `alias_name` varchar(255),
+  `source` varchar(255)
+);
+
+CREATE TABLE `face_images` (
+  `image_id` int PRIMARY KEY AUTO_INCREMENT,
+  `person_id` int,
+  `file_path` varchar(500) NOT NULL,
+  `capture_source` varchar(100),
+  `captured_at` datetime
+);
+
+CREATE TABLE `face_vectors` (
+  `vector_id` int PRIMARY KEY AUTO_INCREMENT,
+  `image_id` int,
+  `embedding` blob,
+  `model_used` varchar(255),
+  `vector_hash` varchar(255)
+);
+
+CREATE TABLE `face_scans` (
+  `scan_id` int PRIMARY KEY AUTO_INCREMENT,
+  `source_image_id` int,
+  `scan_source` enum(local,online,both) NOT NULL,
+  `matched` boolean DEFAULT false,
+  `matched_person_id` int,
+  `confidence_score` float,
+  `match_source` enum(local,online,none) DEFAULT 'none',
+  `matched_image_id` int,
+  `scanned_at` datetime DEFAULT (CURRENT_TIMESTAMP),
+  `processed_by` int
+);
+
+CREATE TABLE `face_matches` (
+  `match_id` int PRIMARY KEY AUTO_INCREMENT,
+  `source_image_id` int,
+  `matched_image_id` int,
+  `confidence_score` float,
+  `match_date` datetime DEFAULT (CURRENT_TIMESTAMP),
+  `match_type` enum(local,online)
+);
+
+CREATE TABLE `osint_sources` (
+  `source_id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(255),
+  `type` varchar(100),
+  `url` varchar(500),
+  `description` text
+);
+
+CREATE TABLE `osint_results` (
+  `result_id` int PRIMARY KEY AUTO_INCREMENT,
+  `person_id` int,
+  `source_id` int,
+  `url` varchar(500),
+  `title` varchar(500),
+  `snippet` text,
+  `status_code` int,
+  `retrieved_at` datetime
+);
+
+CREATE TABLE `cases` (
+  `case_id` int PRIMARY KEY AUTO_INCREMENT,
+  `case_title` varchar(255),
+  `description` text,
+  `status` enum(open,closed) DEFAULT 'open',
+  `created_at` datetime DEFAULT (CURRENT_TIMESTAMP),
+  `updated_at` datetime
+);
+
+CREATE TABLE `case_persons` (
+  `case_person_id` int PRIMARY KEY AUTO_INCREMENT,
+  `case_id` int,
+  `person_id` int,
+  `role` varchar(100)
+);
+
+CREATE TABLE `case_files` (
+  `file_id` int PRIMARY KEY AUTO_INCREMENT,
+  `case_id` int,
+  `file_path` varchar(500),
+  `file_type` varchar(100),
+  `uploaded_at` datetime DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE TABLE `system_logs` (
+  `log_id` int PRIMARY KEY AUTO_INCREMENT,
+  `event_type` varchar(255),
+  `event_details` text,
+  `created_at` datetime DEFAULT (CURRENT_TIMESTAMP),
+  `user_id` int
+);
+
+ALTER TABLE `aliases` ADD FOREIGN KEY (`person_id`) REFERENCES `persons` (`person_id`);
+
+ALTER TABLE `face_images` ADD FOREIGN KEY (`person_id`) REFERENCES `persons` (`person_id`);
+
+ALTER TABLE `face_vectors` ADD FOREIGN KEY (`image_id`) REFERENCES `face_images` (`image_id`);
+
+ALTER TABLE `face_scans` ADD FOREIGN KEY (`source_image_id`) REFERENCES `face_images` (`image_id`);
+
+ALTER TABLE `face_scans` ADD FOREIGN KEY (`matched_person_id`) REFERENCES `persons` (`person_id`);
+
+ALTER TABLE `face_scans` ADD FOREIGN KEY (`matched_image_id`) REFERENCES `face_images` (`image_id`);
+
+ALTER TABLE `face_scans` ADD FOREIGN KEY (`processed_by`) REFERENCES `users` (`id`);
+
+ALTER TABLE `face_matches` ADD FOREIGN KEY (`source_image_id`) REFERENCES `face_images` (`image_id`);
+
+ALTER TABLE `face_matches` ADD FOREIGN KEY (`matched_image_id`) REFERENCES `face_images` (`image_id`);
+
+ALTER TABLE `osint_results` ADD FOREIGN KEY (`person_id`) REFERENCES `persons` (`person_id`);
+
+ALTER TABLE `osint_results` ADD FOREIGN KEY (`source_id`) REFERENCES `osint_sources` (`source_id`);
+
+ALTER TABLE `case_persons` ADD FOREIGN KEY (`case_id`) REFERENCES `cases` (`case_id`);
+
+ALTER TABLE `case_persons` ADD FOREIGN KEY (`person_id`) REFERENCES `persons` (`person_id`);
+
+ALTER TABLE `case_files` ADD FOREIGN KEY (`case_id`) REFERENCES `cases` (`case_id`);
+
+ALTER TABLE `system_logs` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);

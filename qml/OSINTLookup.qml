@@ -204,7 +204,7 @@ Item {
                         ListView {
                             model: OsintManager.osintResults
                             delegate: Rectangle {
-                                width: parent.width
+                                width: ListView.view ? ListView.view.width : 300 // fallback width
                                 height: 110
                                 radius: 6
                                 color: panelColor

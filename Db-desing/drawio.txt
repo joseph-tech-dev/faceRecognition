@@ -1,0 +1,117 @@
+////////////////////////////////////////////////////////
+// FACEINTEL SYSTEM - DB DESIGN
+// Compatible with dbdiagram.io
+////////////////////////////////////////////////////////
+
+Table users {
+  id int [pk, increment]
+  username varchar(255) [unique, not null]
+  password_hash varchar(255) [not null]
+}
+
+Table persons {
+  person_id int [pk, increment]
+  full_name varchar(255)
+  dob date
+  gender varchar(50)
+  national_id varchar(100)
+  notes text
+  created_at datetime [default: `CURRENT_TIMESTAMP`]
+}
+
+Table aliases {
+  alias_id int [pk, increment]
+  person_id int [ref: > persons.person_id]
+  alias_name varchar(255)
+  source varchar(255)
+}
+
+Table face_images {
+  image_id int [pk, increment]
+  person_id int [ref: > persons.person_id, null]
+  file_path varchar(500) [not null]
+  capture_source varchar(100) // e.g., 'camera', 'upload'
+  captured_at datetime
+}
+
+Table face_vectors {
+  vector_id int [pk, increment]
+  image_id int [ref: > face_images.image_id]
+  embedding blob
+  model_used varchar(255)
+  vector_hash varchar(255)
+}
+
+Table face_scans {
+  scan_id int [pk, increment]
+  source_image_id int [ref: > face_images.image_id]
+  scan_source enum('local', 'online', 'both') [not null]
+  matched boolean [default: false]
+  matched_person_id int [ref: > persons.person_id, null]
+  confidence_score float
+  match_source enum('local', 'online', 'none') [default: 'none']
+  matched_image_id int [ref: > face_images.image_id, null]
+  scanned_at datetime [default: `CURRENT_TIMESTAMP`]
+  processed_by int [ref: > users.id]
+}
+
+Table face_matches {
+  match_id int [pk, increment]
+  source_image_id int [ref: > face_images.image_id]
+  matched_image_id int [ref: > face_images.image_id]
+  confidence_score float
+  match_date datetime [default: `CURRENT_TIMESTAMP`]
+  match_type enum('local', 'online')
+}
+
+Table osint_sources {
+  source_id int [pk, increment]
+  name varchar(255)
+  type varchar(100)
+  url varchar(500)
+  description text
+}
+
+Table osint_results {
+  result_id int [pk, increment]
+  person_id int [ref: > persons.person_id]
+  source_id int [ref: > osint_sources.source_id]
+  url varchar(500)
+  title varchar(500)
+  snippet text
+  status_code int
+  retrieved_at datetime
+}
+
+Table cases {
+  case_id int [pk, increment]
+  case_title varchar(255)
+  description text
+  status enum('open', 'closed') [default: 'open']
+  created_at datetime [default: `CURRENT_TIMESTAMP`]
+  updated_at datetime
+}
+
+Table case_persons {
+  case_person_id int [pk, increment]
+  case_id int [ref: > cases.case_id]
+  person_id int [ref: > persons.person_id]
+  role varchar(100) // suspect, witness, victim
+}
+
+Table case_files {
+  file_id int [pk, increment]
+  case_id int [ref: > cases.case_id]
+  file_path varchar(500)
+  file_type varchar(100)
+  uploaded_at datetime [default: `CURRENT_TIMESTAMP`]
+}
+
+Table system_logs {
+  log_id int [pk, increment]
+  event_type varchar(255)
+  event_details text
+  created_at datetime [default: `CURRENT_TIMESTAMP`]
+  user_id int [ref: > users.id]
+}
+
