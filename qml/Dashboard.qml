@@ -15,7 +15,7 @@ Item {
     property color bgColor: "#0a0f1c"
     property color panelColor: "#111a24"
     property color highlightColor: "#1a2a3a"
-    property real borderWidth: 1.5
+    property real borderWidth: 0.5   //1.5
     property real panelRadius: 8
     property real elementRadius: 6
 
@@ -132,9 +132,10 @@ Item {
         // Database Status Panel (unchanged)
         DashboardPanel {
             id: databasePanel
-            title: "DATABASE STATUS"
+            //title: "DATABASE STATUS"
             Layout.fillWidth: true
             Layout.preferredHeight: isMobile ? 160 : 200
+
 
             ColumnLayout {
                 anchors.fill: parent

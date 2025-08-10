@@ -1,0 +1,102 @@
+==============================================================
+                   ZEPHIX ISSUES 
+==============================================================
+
+      [] After Exting Face Scan page CPU usage goes mad.
+      [] System Logo mulfunctions
+      [] Text System Monitoring in Windows & Mac OS
+      [] Reference Path in Face Scan page
+      [] From Face Scan Page to OSINT page; Home Button don't work in OSINT page
+      [] Width not a property in OSINT Page
+      [] 
+
+
+
+
+==============================================================
+            ZEPHIX REMAINING TO DO LIST
+==============================================================
+
+      [] Face Scan Implementation
+      [] Administrator users registration page
+      [] OSINT Implementation
+
+
+
+==============================================================
+                   OSINT SYSTEM
+==============================================================
+-> https://www.sans.org/cyber-security-courses/practical-open-source-intelligence
+
+      -> Gather Data From:
+            [] Public Records
+            [] News media
+            [] Libraries
+            [] Social media platforms
+            [] Images, Videos
+            [] Websites
+            [] The Dark web
+      
+
+      -> Osint tools = [
+            # Personal & Social Media Data
+           [] Maltego
+           [] SpiderFoot
+           [] Social-Searcher
+           [] TweetDeck
+           [] Twitter Advanced Search
+           [] LinkedIn Search
+           [] Hunter.io
+            
+            # Domain and Website Data
+           [] WHOIS Lookup (whois.domaintools.com, ICANN Lookup)
+           [] BuiltWith
+           [] Wayback Machine
+           [] SecurityTrails
+           [] Censys
+           [] Shodan
+            
+            # Public Records & Government Data
+           [] OpenCorporates
+           [] Government Web Portals
+           [] Pipl
+            
+            # News & Media
+           [] Google News
+           [] Mention
+           [] Talkwalker
+           [] RSS Feed Readers
+            
+            # Technical & Network Data
+           [] Nmap
+           [] Shodan
+           [] ExifTool
+           [] MxToolbox (Email Header Analyzer)
+            
+            # Geolocation & Mapping
+           [] Google Earth
+           [] Google Maps
+           [] Geonode
+           [] Mapbox
+           [] GeoTag Viewer
+            
+            # Dark Web & Hidden Data
+           [] Tor Browser
+           [] Ahmia
+           [] Candle
+            
+            # Business Intelligence & Corporate Data
+           [] LinkedIn
+           [] Bloomberg
+           [] Dun & Bradstreet
+           [] OpenCorporates
+            
+            # Data & Metadata Extraction
+           [] ExifTool
+           [] FOCA
+           [] TheHarvester
+            
+            # Automation & Analysis Tools
+           [] Recon-ng
+           [] TheHarvester
+           [] OSINT Framework

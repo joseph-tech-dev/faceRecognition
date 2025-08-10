@@ -510,7 +510,7 @@ Item {
                             }
 
                             Text {
-                                text: "JOHN DOE"
+                                text: "ZEPHIX SYSTEM"
                                 color: neonBlue
                                 font {
                                     pixelSize: root.width * 0.016
