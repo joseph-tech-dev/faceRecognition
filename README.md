@@ -2,11 +2,11 @@
 
 ![FACEINTEL Logo Placeholder](assets/icons/zephix_64.png)
 
-## 🧠 Overview
+## Overview
 
 **FACEINTEL** is an advanced, modular facial recognition and OSINT intelligence platform. Built with C++, QML, Python, and integrated with local and online databases, it enables real-time face matching, identity lookup, and forensic intelligence analysis.
 
-## 🚀 Key Features
+##  Key Features
 
 * 🔍 **Face Recognition Engine (SFace)**
 
@@ -14,29 +14,29 @@
   * Confidence score visualization
   * Local database + cloud matching integration
 
-* 🌐 **OSINT Lookup**
+*  **OSINT Lookup**
 
   * Email, phone, or username trace
   * Python-powered data scraping and enrichment
   * Seamless UI integration with live result viewing
 
-* 📊 **Futuristic Dashboard**
+*  **Futuristic Dashboard**
 
   * Neon grid visuals, holographic UI
   * CPU/GPU/memory activity monitor
   * Modular panels for matches, alerts, filters, analytics
 
-* 🔐 **Authentication System**
+*  **Authentication System**
 
   * Login page with credential verification
   * Secure session handling (QML & C++)
 
-* 📱 **Responsive Design**
+*  **Responsive Design**
 
   * Desktop-first UI with adaptive layout support
   * Grid-based visuals and animated interactions
 
-## 🧱 Project Structure
+##  Project Structure
 
 ```
 FaceIntelSystem/
@@ -59,7 +59,7 @@ FaceIntelSystem/
 └── README.md
 ```
 
-## 💻 System Requirements
+##  System Requirements
 
 * **Qt 5.15+ or Qt 6+** with QtQuick, Controls 2, and QML modules
 * **OpenCV 4.5+** with DNN module
@@ -67,7 +67,7 @@ FaceIntelSystem/
 * **CMake 3.16+**
 * **MySQL/SQLite** for local data persistence
 
-## ⚙️ Build & Run
+##  Build & Run
 
 ```bash
 git clone https://github.com/joseph-tech-dev/faceRecognition.git
@@ -84,9 +84,9 @@ Or use `qmlscene` for UI development:
 qmlscene qml/Main.qml
 ```
 
-## 🖼️ UI Preview
+##  UI Preview
 
-> 💡 Place screenshots in the `assets/` directory and update the links accordingly.
+>  Place screenshots in the `assets/` directory and update the links accordingly.
 
 | Page             | Screenshot                    |
 | ---------------- | ------------------------------|
@@ -94,14 +94,14 @@ qmlscene qml/Main.qml
 | **Dashboard**    | ![](assets/Dashboard.png)     |
 | **OSINT Lookup** | ![](assets/Osint.png)         |
 | **Database**     | ![](Db-desing/Face-intel.png) |
-## 🧭 Navigation
+##  Navigation
 
 * **LoginPage.qml** → Secure access
 * **Dashboard.qml** → Main control hub
 * **FaceScan.qml** → Upload & detect
 * **OSINTLookup.qml** → Identity tracing
 
-## 🛠️ Theme Customization
+##  Theme Customization
 
 Change colors in `Main.qml` or theme constants:
 
@@ -111,13 +111,13 @@ property color bgColor:  "#0a0f1c"
 property color panelColor: "#111a24"
 ```
 
-## 📡 Data Sources
+##  Data Sources
 
 * **Local Database (MySQL/SQLite)**: Face vectors, users, match history
 * **Online APIs**: PimEye, Sherlock-style traces, metadata fetchers
 * **Filesystem**: Drag-and-drop uploads, logs, and snapshots
 
-## 🧪 Troubleshooting
+##  Troubleshooting
 
 | Issue                    | Solution                                    |
 | ------------------------ | ------------------------------------------- |
@@ -126,18 +126,18 @@ property color panelColor: "#111a24"
 | Unresponsive Open button | Ensure valid `url` field in OSINT data      |
 | Build fails on Linux     | Run `chmod +x` on shell scripts / `main.py` |
 
-## 📜 License
+##  License
 
 Licensed under the **MIT License** — see `LICENSE` file for details.
 
-## 🤝 Contributing
+##  Contributing
 
 Pull requests are welcome. Submit issues or feature requests on GitHub.
 If you're contributing code, ensure your patches match the coding style and pass linting.
 
 ---
 
-## 📬 Contact
+##  Contact
 
 For inquiries or support: [predatormj.v3@gmail.com](mailto:predatormj.v3@gmail.com)
 
